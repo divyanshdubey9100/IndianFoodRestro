@@ -1,0 +1,242 @@
+<div class="career-container">
+  <!-- Hero Section -->
+  <section class="career-hero">
+    <div class="hero-content">
+      <h1>Join Our Team</h1>
+      <p class="hero-subtitle">Build Your Career with Spice Palace</p>
+      <p class="hero-description">Be part of a passionate team dedicated to sharing authentic Indian cuisine and creating exceptional dining experiences.</p>
+    </div>
+  </section>
+
+  <!-- Why Work With Us Section -->
+  <section class="why-work-section">
+    <div class="container">
+      <h2 class="section-title">Why Work With Us?</h2>
+      <div class="benefits-grid">
+        <div class="benefit-item">
+          <div class="benefit-icon">🎯</div>
+          <h4>Growth Opportunities</h4>
+          <p>We invest in our team's professional development with training programs and career advancement paths.</p>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon">💰</div>
+          <h4>Competitive Benefits</h4>
+          <p>Attractive salary packages, health insurance, performance bonuses, and employee meal discounts.</p>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon">🤝</div>
+          <h4>Team Culture</h4>
+          <p>Join a diverse, inclusive, and supportive work environment where every team member is valued.</p>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon">⏰</div>
+          <h4>Work-Life Balance</h4>
+          <p>Flexible scheduling options and paid time off to help you maintain a healthy work-life balance.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Current Openings Section -->
+  <section class="openings-section">
+    <div class="container">
+      <h2 class="section-title">Current Openings</h2>
+      <div class="jobs-grid">
+        <div class="job-card" *ngFor="let job of currentJobs">
+          <div class="job-header">
+            <h3>{{ job.title }}</h3>
+            <span class="job-type">{{ job.type }}</span>
+          </div>
+          <div class="job-details">
+            <div class="job-meta">
+              <span class="location">📍 {{ job.location }}</span>
+              <span class="department">🏢 {{ job.department }}</span>
+              <span class="experience">💼 {{ job.experience }}</span>
+            </div>
+            <p class="job-description">{{ job.description }}</p>
+            <div class="job-requirements">
+              <h5>Key Requirements:</h5>
+              <ul>
+                <li *ngFor="let requirement of job.requirements">{{ requirement }}</li>
+              </ul>
+            </div>
+            <div class="job-actions">
+              <button class="btn-apply" (click)="applyForJob(job)">Apply Now</button>
+              <button class="btn-details" (click)="viewJobDetails(job)">View Details</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- No Jobs Available Message -->
+      <div class="no-jobs" *ngIf="currentJobs.length === 0">
+        <div class="no-jobs-content">
+          <div class="no-jobs-icon">💼</div>
+          <h3>No Current Openings</h3>
+          <p>We don't have any open positions at the moment, but we're always looking for talented individuals to join our team.</p>
+          <p>Feel free to submit your resume for future opportunities!</p>
+          <button class="btn-primary" (click)="openGeneralApplication()">Submit Resume</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Application Process Section -->
+  <section class="process-section">
+    <div class="container">
+      <h2 class="section-title">Our Hiring Process</h2>
+      <div class="process-steps">
+        <div class="step">
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <h4>Apply Online</h4>
+            <p>Submit your application through our online portal with your resume and cover letter.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <h4>Initial Review</h4>
+            <p>Our HR team will review your application and contact qualified candidates within 5-7 business days.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <h4>Interview</h4>
+            <p>Selected candidates will be invited for an interview with the hiring manager and team members.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-number">4</div>
+          <div class="step-content">
+            <h4>Final Decision</h4>
+            <p>We'll make our final decision and extend an offer to the successful candidate.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Company Culture Section -->
+  <section class="culture-section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="culture-content">
+            <h2>Our Culture</h2>
+            <p>At Spice Palace, we believe that our employees are our greatest asset. We foster a culture of respect, creativity, and continuous learning where everyone can thrive.</p>
+            
+            <div class="culture-values">
+              <div class="culture-value">
+                <h5>🌟 Excellence</h5>
+                <p>We strive for excellence in everything we do, from food preparation to customer service.</p>
+              </div>
+              <div class="culture-value">
+                <h5>🤝 Teamwork</h5>
+                <p>We work together as one team, supporting each other to achieve common goals.</p>
+              </div>
+              <div class="culture-value">
+                <h5>🎓 Learning</h5>
+                <p>We encourage continuous learning and provide opportunities for skill development.</p>
+              </div>
+              <div class="culture-value">
+                <h5>🌍 Diversity</h5>
+                <p>We celebrate diversity and create an inclusive environment for all team members.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="culture-image">
+            <img src="/assets/images/team-culture.jpg" alt="Our Team Culture" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section class="career-contact-section">
+    <div class="container">
+      <div class="contact-content">
+        <h2>Have Questions?</h2>
+        <p>Get in touch with our HR team for any career-related inquiries.</p>
+        <div class="contact-info">
+          <div class="contact-item">
+            <span class="contact-icon">📧</span>
+            <div class="contact-details">
+              <h5>Email</h5>
+              <p>careers@spicepalace.com</p>
+            </div>
+          </div>
+          <div class="contact-item">
+            <span class="contact-icon">📞</span>
+            <div class="contact-details">
+              <h5>Phone</h5>
+              <p>+1 (555) 123-4567</p>
+            </div>
+          </div>
+          <div class="contact-item">
+            <span class="contact-icon">📍</span>
+            <div class="contact-details">
+              <h5>Visit Us</h5>
+              <p>123 Spice Avenue, Food District</p>
+            </div>
+          </div>
+        </div>
+        <button class="btn-primary" routerLink="/contactus">Contact Us</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Application Modal -->
+<div class="modal-overlay" *ngIf="showApplicationModal" (click)="closeApplicationModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Apply for {{ selectedJob?.title }}</h3>
+      <button class="modal-close" (click)="closeApplicationModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form class="application-form" (ngSubmit)="submitApplication()" #applicationForm="ngForm">
+        <div class="form-group">
+          <label for="fullName">Full Name *</label>
+          <input type="text" id="fullName" name="fullName" [(ngModel)]="applicationData.fullName" required>
+        </div>
+        <div class="form-group">
+          <label for="email">Email Address *</label>
+          <input type="email" id="email" name="email" [(ngModel)]="applicationData.email" required>
+        </div>
+        <div class="form-group">
+          <label for="phone">Phone Number *</label>
+          <input type="tel" id="phone" name="phone" [(ngModel)]="applicationData.phone" required>
+        </div>
+        <div class="form-group">
+          <label for="experience">Years of Experience</label>
+          <select id="experience" name="experience" [(ngModel)]="applicationData.experience">
+            <option value="">Select Experience</option>
+            <option value="0-1">0-1 years</option>
+            <option value="2-3">2-3 years</option>
+            <option value="4-5">4-5 years</option>
+            <option value="6+">6+ years</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="coverLetter">Cover Letter</label>
+          <textarea id="coverLetter" name="coverLetter" [(ngModel)]="applicationData.coverLetter" rows="4" 
+                    placeholder="Tell us why you're the perfect fit for this role..."></textarea>
+        </div>
+        <div class="form-group">
+          <label for="resume">Resume *</label>
+          <input type="file" id="resume" name="resume" accept=".pdf,.doc,.docx" (change)="onFileSelect($event)" required>
+          <small>Please upload your resume in PDF, DOC, or DOCX format (max 5MB)</small>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" (click)="closeApplicationModal()">Cancel</button>
+          <button type="submit" class="btn-primary" [disabled]="!applicationForm.valid">Submit Application</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

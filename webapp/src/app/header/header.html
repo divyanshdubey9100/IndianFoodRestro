@@ -1,0 +1,38 @@
+<!-- header.component.html -->
+<header>
+  <nav class="navbar navbar-expand-lg bg-primary navbar-dark py-2">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="#">FoodRestro</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#mainMenu"
+        aria-controls="mainMenu"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="mainMenu">
+        <ul class="navbar-nav ms-auto gap-2">
+          <li class="nav-item">
+            <a class="nav-link text-white" routerLink="/">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" routerLink="/about-us">About Us</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" routerLink="/career">Career</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" routerLink="/contact-us">Contact</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link btn btn-light px-3 py-1 ms-2" routerLink="/sign-in">Login</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</header>

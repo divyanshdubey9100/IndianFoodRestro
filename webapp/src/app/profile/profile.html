@@ -1,0 +1,242 @@
+<div class="profile-container" *ngIf="currentUser">
+  <!-- Profile Header -->
+  <div class="profile-header">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-8">
+          <div class="d-flex align-items-center">
+            <div class="profile-avatar">
+              <i class="fas fa-user-circle"></i>
+            </div>
+            <div class="profile-info">
+              <h2>{{ currentUser.name }}</h2>
+              <p class="mb-1">{{ currentUser.email }}</p>
+              <span class="badge user-type-badge" 
+                    [ngClass]="{
+                      'bg-danger': isAdmin(),
+                      'bg-success': isStaff(),
+                      'bg-primary': isUser()
+                    }">
+                {{ currentUser.userType === 'user' ? 'Customer' : (currentUser.userType | titlecase) }}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 text-end">
+          <button class="btn btn-outline-danger" (click)="logout()">
+            <i class="fas fa-sign-out-alt me-2"></i>Logout
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Dashboard -->
+  <div *ngIf="isAdmin()" class="admin-dashboard">
+    <div class="container mt-4">
+      <h3 class="mb-4">Admin Dashboard</h3>
+      
+      <!-- Stats Cards -->
+      <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+          <div class="stat-card">
+            <div class="stat-icon bg-primary">
+              <i class="fas fa-shopping-cart"></i>
+            </div>
+            <div class="stat-details">
+              <h4>{{ adminStats.totalOrders }}</h4>
+              <p>Total Orders</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 mb-3">
+          <div class="stat-card">
+            <div class="stat-icon bg-success">
+              <i class="fas fa-dollar-sign"></i>
+            </div>
+            <div class="stat-details">
+              <h4>${{ adminStats.totalRevenue | number:'1.2-2' }}</h4>
+              <p>Total Revenue</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 mb-3">
+          <div class="stat-card">
+            <div class="stat-icon bg-info">
+              <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-details">
+              <h4>{{ adminStats.activeUsers }}</h4>
+              <p>Active Users</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 mb-3">
+          <div class="stat-card">
+            <div class="stat-icon bg-warning">
+              <i class="fas fa-user-tie"></i>
+            </div>
+            <div class="stat-details">
+              <h4>{{ adminStats.staffCount }}</h4>
+              <p>Staff Members</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Admin Actions -->
+      <div class="row">
+        <div class="col-md-6">
+          <div class="action-card">
+            <h5>Quick Actions</h5>
+            <div class="d-grid gap-2">
+              <button class="btn btn-primary">Manage Menu</button>
+              <button class="btn btn-success">View Reports</button>
+              <button class="btn btn-info">Manage Staff</button>
+              <button class="btn btn-warning">System Settings</button>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="action-card">
+            <h5>Recent Activity</h5>
+            <ul class="list-unstyled">
+              <li class="activity-item">
+                <i class="fas fa-plus-circle text-success"></i>
+                New user registered
+                <small class="text-muted">2 hours ago</small>
+              </li>
+              <li class="activity-item">
+                <i class="fas fa-edit text-primary"></i>
+                Menu updated
+                <small class="text-muted">4 hours ago</small>
+              </li>
+              <li class="activity-item">
+                <i class="fas fa-user-plus text-info"></i>
+                New staff member added
+                <small class="text-muted">1 day ago</small>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Staff Dashboard -->
+  <div *ngIf="isStaff()" class="staff-dashboard">
+    <div class="container mt-4">
+      <h3 class="mb-4">Staff Dashboard</h3>
+      
+      <div class="row">
+        <div class="col-md-8">
+          <div class="tasks-card">
+            <h5>Today's Tasks</h5>
+            <div class="task-list">
+              <div *ngFor="let task of staffTasks" class="task-item">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <h6 class="mb-1">{{ task.task }}</h6>
+                    <span [ngClass]="getTaskPriorityClass(task.priority)">
+                      {{ task.priority | titlecase }} Priority
+                    </span>
+                  </div>
+                  <span [ngClass]="getTaskStatusClass(task.status)">
+                    {{ task.status | titlecase }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="info-card">
+            <h5>Staff Info</h5>
+            <p><strong>Employee ID:</strong> EMP{{ currentUser.id.toString().padStart(3, '0') }}</p>
+            <p><strong>Department:</strong> Kitchen</p>
+            <p><strong>Shift:</strong> Morning (9 AM - 5 PM)</p>
+            <p><strong>Join Date:</strong> {{ currentUser.joinDate | date:'shortDate' }}</p>
+          </div>
+          
+          <div class="info-card mt-3">
+            <h5>Quick Actions</h5>
+            <div class="d-grid gap-2">
+              <button class="btn btn-primary btn-sm">Clock In/Out</button>
+              <button class="btn btn-success btn-sm">View Schedule</button>
+              <button class="btn btn-info btn-sm">Report Issue</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- User Dashboard -->
+  <div *ngIf="isUser()" class="user-dashboard">
+    <div class="container mt-4">
+      <h3 class="mb-4">Customer Dashboard</h3>
+      
+      <div class="row">
+        <div class="col-md-8">
+          <div class="orders-card">
+            <h5>Order History</h5>
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>Order #</th>
+                    <th>Date</th>
+                    <th>Items</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let order of userOrders">
+                    <td>#{{ order.id.toString().padStart(4, '0') }}</td>
+                    <td>{{ order.date | date:'shortDate' }}</td>
+                    <td>{{ order.items }}</td>
+                    <td>${{ order.total | number:'1.2-2' }}</td>
+                    <td>
+                      <span [ngClass]="getOrderStatusClass(order.status)">
+                        {{ order.status | titlecase }}
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="info-card">
+            <h5>Personal Information</h5>
+            <p><strong>Name:</strong> {{ currentUser.name }}</p>
+            <p><strong>Email:</strong> {{ currentUser.email }}</p>
+            <p *ngIf="currentUser.phone"><strong>Phone:</strong> {{ currentUser.phone }}</p>
+            <p *ngIf="currentUser.address"><strong>Address:</strong> {{ currentUser.address }}</p>
+            <p><strong>Member Since:</strong> {{ currentUser.joinDate | date:'shortDate' }}</p>
+          </div>
+          
+          <div class="info-card mt-3">
+            <h5>Quick Actions</h5>
+            <div class="d-grid gap-2">
+              <button class="btn btn-primary btn-sm">Order Now</button>
+              <button class="btn btn-success btn-sm">View Menu</button>
+              <button class="btn btn-info btn-sm">Edit Profile</button>
+              <button class="btn btn-warning btn-sm">Contact Support</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Fallback for not authenticated users -->
+<div *ngIf="!currentUser" class="text-center mt-5">
+  <h3>Please log in to view your profile</h3>
+  <p>You will be redirected to the login page shortly...</p>
+</div>
+
+<!-- <h1>{{userName}}</h1> -->
