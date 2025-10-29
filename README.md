@@ -1,5 +1,32 @@
 # IndianFoodRestro
 
+# data base details
+CREATE USER indian_food_restro WITH PASSWORD 'indian_food_restro';
+
+CREATE DATABASE indian_food_db;
+
+GRANT ALL PRIVILEGES ON DATABASE indian_food_db TO indian_food_restro;
+
+ALTER DATABASE indian_food_db OWNER TO indian_food_restro;
+
+\c indian_food_db
+
+
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO indian_food_restro;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO indian_food_restro;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO indian_food_restro;
+
+
+CREATE USER indian_food_restro WITH PASSWORD 'indian_food_restro';
+CREATE DATABASE indian_food_db;
+GRANT ALL PRIVILEGES ON DATABASE indian_food_db TO indian_food_restro;
+ALTER DATABASE indian_food_db OWNER TO indian_food_restro;
+
+
+
+
+
+
 
 
 ## Getting started
