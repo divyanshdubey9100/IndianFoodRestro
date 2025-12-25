@@ -1,60 +1,32 @@
-<form #registerForm="ngForm" (ngSubmit)="onSubmit()" class="register-form">
+<form [formGroup]="registerUserForm" (ngSubmit)="onSubmitUserForm()" class="register-form">
   <h2 class="mb-4">Register</h2>
   
-  <!-- Error/Success Messages -->
-  <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
-    {{ errorMessage }}
-  </div>
-  <div *ngIf="successMessage" class="alert alert-success" role="alert">
-    {{ successMessage }}
-  </div>
-  
-  <div class="mb-3">
+   <div class="mb-3">
     <label for="firstName" class="form-label">First Name *</label>
     <input
-      type="text"
-      id="firstName"
-      name="firstName"
-      class="form-control"
-      required
-      minlength="2"
-      [(ngModel)]="firstName"
-      #firstNameCtrl="ngModel"
-      [disabled]="isLoading"
+      class="form-control mt-2"
+      formControlName="firstName"
+      placeholder="First Name"
     />
-    <div *ngIf="firstNameCtrl.invalid && firstNameCtrl.touched" class="text-danger">
-      First name is required (min 2 characters).
-    </div>
   </div>
-  <div class="mb-3">
+   <div class="mb-3">
     <label for="middleName" class="form-label">Middle Name</label>
     <input
-      type="text"
-      id="middleName"
-      name="middleName"
-      class="form-control"
-      [(ngModel)]="middleName"
-      [disabled]="isLoading"
+      formControlName="middleName"
+      class="form-control mt-2"
+      placeholder="Middle Name"
     />
   </div>
   <div class="mb-3">
     <label for="lastName" class="form-label">Last Name *</label>
     <input
-      type="text"
       id="lastName"
-      name="lastName"
-      class="form-control"
-      required
-      minlength="2"
-      [(ngModel)]="lastName"
-      #lastNameCtrl="ngModel"
-      [disabled]="isLoading"
+      formControlName="lastName"
+      class="form-control mt-2"
+      placeholder="Last Name"
     />
-    <div *ngIf="lastNameCtrl.invalid && lastNameCtrl.touched" class="text-danger">
-      Last name is required (min 2 characters).
     </div>
-  </div>
-  <div class="mb-3">
+ <!-- <div class="mb-3">
     <label for="mobile" class="form-label">Mobile *</label>
     <input
       type="tel"
@@ -88,7 +60,7 @@
       Enter a valid phone number (6-12 digits).
     </div>
   </div> -->
-  <div class="mb-3">
+  <!-- <div class="mb-3">
     <label for="dob" class="form-label">Date of Birth *</label>
     <input
       type="date"
@@ -226,13 +198,14 @@
       Passwords do not match.
     </div>
   </div>
-  
+  but
   <button type="submit" class="btn btn-primary w-100" [disabled]="registerForm.invalid || isLoading || password !== confirmPassword">
     <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
     {{ isLoading ? 'Registering...' : 'Register' }}
-  </button>
+  </button>-->
+  <button type="submit">Register</button>
   <div class="mt-3 text-center">
-    <span>Already registered?</span>
-    <a routerLink="/sign-in" class="btn btn-link">Login here</a>
-  </div>
+   <span>Already registered?</span>
+     <a routerLink="/sign-in" class="btn btn-link">Login here</a>
+  </div>  
 </form>
