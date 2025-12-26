@@ -8,6 +8,9 @@
       formControlName="firstName"
       placeholder="First Name"
     />
+    <div *ngIf="showErrors(getControl('firstName'))" class="text-danger mt-1">
+      {{ getErrorMessage('firstName') }}
+    </div>
   </div>
    <div class="mb-3">
     <label for="middleName" class="form-label">Middle Name</label>
@@ -16,6 +19,9 @@
       class="form-control mt-2"
       placeholder="Middle Name"
     />
+    <div *ngIf="showErrors(getControl('middleName'))" class="text-danger mt-1">
+      {{ getErrorMessage('middleName') }}
+    </div>
   </div>
   <div class="mb-3">
     <label for="lastName" class="form-label">Last Name *</label>
@@ -25,6 +31,9 @@
       class="form-control mt-2"
       placeholder="Last Name"
     />
+    <div *ngIf="showErrors(getControl('lastName'))" class="text-danger mt-1">
+      {{ getErrorMessage('lastName') }}
+    </div>
     </div>
  <!-- <div class="mb-3">
     <label for="mobile" class="form-label">Mobile *</label>
@@ -44,7 +53,7 @@
       Enter a valid 10-digit mobile number.
     </div>
   </div>
-  <!-- <div class="mb-3">
+   <div class="mb-3">
     <label for="phone" class="form-label">Phone *</label>
     <input
       type="tel"

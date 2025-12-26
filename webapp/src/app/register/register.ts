@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { FormValidationService } from '../services/form-validation.service';
-import { FormValidationMessageService } from '../services/validation-message.service';
+import { FormValidatorService } from '../services/form-validaton.service';
 
 @Component({
   selector: 'app-register',
@@ -19,36 +18,34 @@ export class RegisterComponent implements OnInit{
 
   constructor(
     private formData: FormBuilder,
-    private patternValidator:
-            FormValidationService
+    private formValidator: FormValidatorService
   ) {}
   ngOnInit(): void {
     this.registerUserForm=this.formData.group({
-      firstName: ['', [Validators.required, this.patternValidator.getValidator('namePattern')]],
+      firstName: ['', [Validators.required, this.formValidator.getValidator('namePattern')]],
+      middleName: ['', [Validators.minLength(2), this.formValidator.getValidator('namePattern')]],
+      lastName: ['', [Validators.required, this.formValidator.getValidator('namePattern')]]
     })
   }
 
-  getErrorMessage(controlName: string): string | null {
-    const control = this.registerUserForm.get(controlName);
-    if (!control || !control.errors) {
-      return null;
-    }
-
-    const errorKey = Object.keys(control.errors)[0];
-    const errorValue = control.errors[errorKey];
-
-    // If our custom pattern validator returned a message object, use it
-    if (errorKey === 'pattern' && errorValue && (errorValue as any).message) {
-      return (errorValue as any).message;
-    }
-
-    // Fall back to the message service (handles required, minlength, etc.)
-    return FormValidationMessageService.getValidatorErrorMessage(errorKey, errorValue);
-  }
-
   onSubmitUserForm(){
+    if (this.registerUserForm.invalid) {
+      this.registerUserForm.markAllAsTouched();
+      return;
+    }
     console.log(this.registerUserForm.value);
   }
 
+  getControl(name: string): AbstractControl | null {
+    return this.registerUserForm.get(name);
+  }
+
+  showErrors(control: AbstractControl | null): boolean {
+    return !!control && control.invalid && (control.touched || control.dirty);
+  }
+
+  getErrorMessage(controlName: string): string {
+    return this.formValidator.getErrorMessage(this.getControl(controlName));
+  }
   
 }
