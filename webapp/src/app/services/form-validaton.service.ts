@@ -6,39 +6,33 @@ import { VALIDATION_ERRORS } from '../validation-message/validation-message.mess
 
 @Injectable({ providedIn: 'root' })
 export class FormValidatorService {
-  private patternToErrorKeyMap: Record<keyof typeof VALIDATION_PATTERNS, keyof typeof VALIDATION_ERRORS> = {
-    emailPattern: 'email',
-    passwordPattern: 'pattern',
-    namePattern: 'name'
-  };
+    getValidator(
+        patternKey: keyof typeof VALIDATION_PATTERNS,
+        errorMessageKey: keyof typeof VALIDATION_ERRORS
+    ): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            if (!control.value) return null;
 
-  getValidator(
-    patternKey: keyof typeof VALIDATION_PATTERNS
-  ): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      if (!control.value) return null;
+            const pattern = new RegExp(VALIDATION_PATTERNS[patternKey]);
 
-      const pattern = new RegExp(VALIDATION_PATTERNS[patternKey]);
-      const errorMessageKey = this.patternToErrorKeyMap[patternKey];
-
-      return pattern.test(control.value)
-        ? null
-        : { [errorMessageKey]: true };
-    };
-  }
-
-  getErrorMessage(control: AbstractControl | null): string {
-    if (!control || !control.errors) return '';
-    const firstKey = Object.keys(control.errors)[0] as keyof typeof VALIDATION_ERRORS;
-    const messageOrFn = VALIDATION_ERRORS[firstKey];
-    const validatorValue = control.errors[firstKey];
-    if (typeof messageOrFn === 'function') {
-      try {
-        return messageOrFn(validatorValue);
-      } catch {
-        return '';
-      }
+            return pattern.test(control.value)
+                ? null
+                : { [errorMessageKey]: true };
+        };
     }
-    return messageOrFn ?? '';
-  }
+
+    getErrorMessage(control: AbstractControl | null): string {
+        if (!control || !control.errors) return '';
+        const firstKey = Object.keys(control.errors)[0] as keyof typeof VALIDATION_ERRORS;
+        const messageOrFn = VALIDATION_ERRORS[firstKey];
+        const validatorValue = control.errors[firstKey];
+        if (typeof messageOrFn === 'function') {
+            try {
+                return messageOrFn(validatorValue);
+            } catch {
+                return '';
+            }
+        }
+        return messageOrFn ?? '';
+    }
 }

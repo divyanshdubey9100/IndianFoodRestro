@@ -21,10 +21,11 @@ export class RegisterComponent implements OnInit{
     private formValidator: FormValidatorService
   ) {}
   ngOnInit(): void {
-    this.registerUserForm=this.formData.group({
-      firstName: ['', [Validators.required, this.formValidator.getValidator('namePattern')]],
-      middleName: ['', [Validators.minLength(2), this.formValidator.getValidator('namePattern')]],
-      lastName: ['', [Validators.required, this.formValidator.getValidator('namePattern')]]
+    this.registerUserForm = this.formData.group({
+      firstName: ['', [Validators.required, Validators.minLength(2), this.formValidator.getValidator('name', 'name')]],
+      middleName: ['', [Validators.minLength(2), this.formValidator.getValidator('name', 'name')]],
+      lastName: ['', [Validators.required, Validators.minLength(2), this.formValidator.getValidator('name', 'name')]],
+      mobile: ['', [Validators.required, this.formValidator.getValidator('mobile', 'mobile')]]
     })
   }
 
@@ -45,7 +46,15 @@ export class RegisterComponent implements OnInit{
   }
 
   getErrorMessage(controlName: string): string {
-    return this.formValidator.getErrorMessage(this.getControl(controlName));
+    const control = this.getControl(controlName);
+    if (!control || !control.errors) {
+      return '';
+    }
+    if (control.errors['required']) return `${controlName} is required`;
+    if (control.errors['minlength']) return `${controlName} must be at least ${control.errors['minlength'].requiredLength} characters`;
+    if (control.errors['maxlength']) return `${controlName} cannot exceed ${control.errors['maxlength'].requiredLength} characters`;
+    if (control.errors['pattern']) return `${controlName} format is invalid`;
+    return this.formValidator.getErrorMessage(control);
   }
   
 }
