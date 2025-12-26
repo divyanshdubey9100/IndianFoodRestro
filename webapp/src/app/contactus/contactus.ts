@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
@@ -29,9 +29,9 @@ interface FAQ {
 
 @Component({
   selector: 'app-contactus',
-  imports: [CommonModule, FormsModule, RouterModule, DatePipe],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './contactus.html',
-  styleUrl: './contactus.css'
+  styleUrls: ['./contactus.css']
 })
 export class Contactus implements OnInit {
   contactData: ContactData = {
