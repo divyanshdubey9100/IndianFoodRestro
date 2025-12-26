@@ -5,6 +5,7 @@ export const VALIDATION_ERRORS ={
             email: 'Please enter a valid email address.',
             pattern: 'The format is invalid.',
             name:'entered name should be valid String',
+            mobile:'enter valid mobile number',
 
             // Dynamic Validators (using value)
             minlength: (validatorValue: any) => `Minimum length is ${validatorValue.requiredLength} characters.`,

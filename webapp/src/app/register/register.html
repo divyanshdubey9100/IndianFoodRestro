@@ -26,7 +26,6 @@
   <div class="mb-3">
     <label for="lastName" class="form-label">Last Name *</label>
     <input
-      id="lastName"
       formControlName="lastName"
       class="form-control mt-2"
       placeholder="Last Name"
@@ -35,25 +34,18 @@
       {{ getErrorMessage('lastName') }}
     </div>
     </div>
- <!-- <div class="mb-3">
+  <div class="mb-3">
     <label for="mobile" class="form-label">Mobile *</label>
     <input
-      type="tel"
-      id="mobile"
-      name="mobile"
-      class="form-control"
-      required
-      pattern="^[6-9]\d{9}$"
-      [(ngModel)]="mobile"
-      #mobileCtrl="ngModel"
-      [disabled]="isLoading"
-      (blur)="checkMobileAvailability()"
+      formControlName="mobile"
+      class="form-control mt-2"
+      placeholder="Mobile No."
     />
-    <div *ngIf="mobileCtrl.invalid && mobileCtrl.touched" class="text-danger">
-      Enter a valid 10-digit mobile number.
+     <div *ngIf="showErrors(getControl('mobile'))" class="text-danger mt-1">
+      {{ getErrorMessage('mobile') }}
     </div>
   </div>
-   <div class="mb-3">
+   <!--<div class="mb-3">
     <label for="phone" class="form-label">Phone *</label>
     <input
       type="tel"
