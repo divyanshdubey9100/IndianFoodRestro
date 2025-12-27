@@ -1,0 +1,54 @@
+<div class="date-picker">
+
+  <input
+    type="text"
+    [value]="value"
+    placeholder="YYYY-MM-DD"
+    readonly
+    (click)="toggle()"
+  />
+
+  <div class="calendar" *ngIf="open">
+
+    <!-- Header -->
+    <div class="calendar-header">
+      <select
+        [value]="month"
+        (change)="month = +$any($event.target).value"
+      >
+        <option *ngFor="let m of months; let i = index" [value]="i">
+          {{ m }}
+        </option>
+      </select>
+
+      <select
+        [value]="year"
+        (change)="year = +$any($event.target).value"
+      >
+        <option *ngFor="let y of years" [value]="y">
+          {{ y }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Days -->
+    <div class="calendar-grid">
+      <button
+        type="button"
+        *ngFor="let day of daysInMonth"
+        (click)="selectDay(day)"
+        [class.selected]="isSelected(day)"
+      >
+        {{ day }}
+      </button>
+    </div>
+
+    <!-- Footer -->
+    <div class="calendar-footer">
+      <button type="button" class="clear" (click)="clear()">Clear</button>
+      <button type="button" class="today" (click)="setToday()">Today</button>
+    </div>
+
+  </div>
+
+</div>
