@@ -45,39 +45,17 @@
       {{ getErrorMessage('mobile') }}
     </div>
   </div>
-   <!--<div class="mb-3">
-    <label for="phone" class="form-label">Phone *</label>
-    <input
-      type="tel"
-      id="phone"
-      name="phone"
-      class="form-control"
-      required
-      pattern="^\d{6,12}$"
-      [(ngModel)]="phone"
-      #phoneCtrl="ngModel"
-    />
-    <div *ngIf="phoneCtrl.invalid && phoneCtrl.touched" class="text-danger">
-      Enter a valid phone number (6-12 digits).
-    </div>
-  </div> -->
-  <!-- <div class="mb-3">
+   <div class="mb-3">
     <label for="dob" class="form-label">Date of Birth *</label>
-    <input
-      type="date"
+    <app-date-picker
       id="dob"
-      name="dob"
-      class="form-control"
-      required
-      [(ngModel)]="dob"
-      #dobCtrl="ngModel"
-      [disabled]="isLoading"
-    />
-    <div *ngIf="dobCtrl.invalid && dobCtrl.touched" class="text-danger">
-      Date of Birth is required.
+      formControlName="dob">
+    </app-date-picker>
+    <div *ngIf="showErrors(getControl('dob'))" class="text-danger mt-1">
+      {{ getErrorMessage('dob') }}
     </div>
   </div>
-  <div class="mb-3">
+  <!--<div class="mb-3">
     <label class="form-label">Gender *</label>
     <div>
       <div class="form-check form-check-inline">

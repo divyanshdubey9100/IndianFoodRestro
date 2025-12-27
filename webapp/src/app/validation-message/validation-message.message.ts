@@ -13,7 +13,7 @@ export const VALIDATION_ERRORS ={
 
             // Custom Validators (match names from your ValidationService)
             cannotContainSpace: 'Spaces are not allowed in this field.',
-            passwordStrength: ''
-       
+            passwordStrength: 'Password must be at least 8 characters long and contain uppercase, lowercase, and numbers.',
+            dateofbirth: 'Please enter a valid date of birth in YYYY-MM-DD format.'
 
 }as const;
