@@ -1,0 +1,253 @@
+<div class="home-container">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <div class="hero-text">
+        <h1 class="hero-title">Welcome to Spice Palace</h1>
+        <p class="hero-subtitle">Authentic Indian Flavors in Every Bite</p>
+        <p class="hero-description">Experience the rich culinary heritage of India with our traditional recipes, fresh ingredients, and warm hospitality that has been delighting guests for over 25 years.</p>
+        <div class="hero-buttons">
+          <button class="btn-primary" routerLink="/menu">View Our Menu</button>
+          <button class="btn-secondary" routerLink="/contactus">Make Reservation</button>
+        </div>
+      </div>
+      <div class="hero-image">
+        <img src="/assets/images/hero-dish.jpg" alt="Delicious Indian Cuisine" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Dishes Section -->
+  <section class="featured-section">
+    <div class="container">
+      <h2 class="section-title">Our Signature Dishes</h2>
+      <p class="section-subtitle">Discover the authentic tastes that have made us a local favorite</p>
+      <div class="dishes-grid">
+        <div class="dish-card" *ngFor="let dish of featuredDishes">
+          <div class="dish-image">
+            <img [src]="dish.image" [alt]="dish.name" />
+            <div class="dish-overlay">
+              <button class="view-recipe-btn" (click)="viewDish(dish)">View Details</button>
+            </div>
+          </div>
+          <div class="dish-info">
+            <h3>{{ dish.name }}</h3>
+            <p class="dish-description">{{ dish.description }}</p>
+            <div class="dish-meta">
+              <span class="price">${{ dish.price }}</span>
+              <span class="rating">
+                <span class="stars" [innerHTML]="getStarRating(dish.rating)"></span>
+                ({{ dish.rating }})
+              </span>
+            </div>
+            <div class="dish-tags">
+              <span class="tag" *ngFor="let tag of dish.tags">{{ tag }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="view-all-container">
+        <button class="btn-outline" routerLink="/menu">View Full Menu</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Preview Section -->
+  <section class="about-preview-section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="about-content">
+            <h2>Our Story</h2>
+            <p class="lead">From humble beginnings to culinary excellence</p>
+            <p>Established in 1995, Spice Palace has been serving authentic Indian cuisine with a passion for traditional flavors and innovative presentation. Our journey began with Chef Rajesh Kumar's vision to bring the authentic taste of India to our community.</p>
+            <div class="stats-grid">
+              <div class="stat-item">
+                <div class="stat-number">25+</div>
+                <div class="stat-label">Years of Excellence</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-number">50,000+</div>
+                <div class="stat-label">Happy Customers</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-number">100+</div>
+                <div class="stat-label">Authentic Dishes</div>
+              </div>
+            </div>
+            <button class="btn-primary" routerLink="/about-us">Learn More About Us</button>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="about-images">
+            <div class="image-grid">
+              <img src="/assets/images/chef-cooking.jpg" alt="Chef Cooking" class="main-image" />
+              <img src="/assets/images/restaurant-interior.jpg" alt="Restaurant Interior" class="side-image" />
+              <img src="/assets/images/spice-collection.jpg" alt="Spice Collection" class="side-image" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features-section">
+    <div class="container">
+      <h2 class="section-title">Why Choose Spice Palace?</h2>
+      <div class="features-grid">
+        <div class="feature-item" *ngFor="let feature of restaurantFeatures">
+          <div class="feature-icon">
+            <i [class]="feature.icon"></i>
+          </div>
+          <h4>{{ feature.title }}</h4>
+          <p>{{ feature.description }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section class="testimonials-section">
+    <div class="container">
+      <h2 class="section-title">What Our Customers Say</h2>
+      <div class="testimonials-slider">
+        <div class="testimonial-card" *ngFor="let testimonial of customerTestimonials; let i = index" 
+             [class.active]="i === currentTestimonial">
+          <div class="testimonial-content">
+            <div class="quote-icon">"</div>
+            <p class="testimonial-text">{{ testimonial.text }}</p>
+            <div class="testimonial-author">
+              <div class="author-image">
+                <img [src]="testimonial.image" [alt]="testimonial.name" />
+              </div>
+              <div class="author-info">
+                <h5>{{ testimonial.name }}</h5>
+                <p>{{ testimonial.title }}</p>
+                <div class="rating">
+                  <span [innerHTML]="getStarRating(testimonial.rating)"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-controls">
+        <button class="prev-btn" (click)="previousTestimonial()">&lt;</button>
+        <div class="testimonial-dots">
+          <button *ngFor="let testimonial of customerTestimonials; let i = index" 
+                  class="dot" 
+                  [class.active]="i === currentTestimonial"
+                  (click)="goToTestimonial(i)"></button>
+        </div>
+        <button class="next-btn" (click)="nextTestimonial()">&gt;</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Special Offers Section -->
+  <section class="offers-section">
+    <div class="container">
+      <h2 class="section-title">Special Offers</h2>
+      <div class="offers-grid">
+        <div class="offer-card" *ngFor="let offer of specialOffers">
+          <div class="offer-badge">{{ offer.discount }}</div>
+          <div class="offer-content">
+            <h3>{{ offer.title }}</h3>
+            <p>{{ offer.description }}</p>
+            <div class="offer-validity">Valid until: {{ offer.validUntil | date:'medium' }}</div>
+            <button class="btn-primary">Claim Offer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Location & Hours Section -->
+  <section class="location-section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="location-info">
+            <h2>Visit Us Today</h2>
+            <div class="info-item">
+              <div class="info-icon">📍</div>
+              <div class="info-details">
+                <h4>Address</h4>
+                <p>123 Spice Avenue<br>Food District, Flavor City<br>FC 12345</p>
+              </div>
+            </div>
+            <div class="info-item">
+              <div class="info-icon">📞</div>
+              <div class="info-details">
+                <h4>Phone</h4>
+                <p>+1 (555) 123-4567</p>
+              </div>
+            </div>
+            <div class="info-item">
+              <div class="info-icon">⏰</div>
+              <div class="info-details">
+                <h4>Hours</h4>
+                <div class="hours-list">
+                  <div class="hours-item" *ngFor="let hours of operatingHours">
+                    <span class="day">{{ hours.day }}:</span>
+                    <span class="time">{{ hours.time }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="map-container">
+            <div class="map-placeholder">
+              <div class="map-icon">🗺️</div>
+              <p>Interactive Map</p>
+              <p class="map-note">Click to view in Google Maps</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Newsletter Section -->
+  <section class="newsletter-section">
+    <div class="container">
+      <div class="newsletter-content">
+        <h2>Stay Updated with Spice Palace</h2>
+        <p>Subscribe to our newsletter for exclusive offers, new dish announcements, and special events.</p>
+        <form class="newsletter-form" (ngSubmit)="subscribeNewsletter()" #newsletterForm="ngForm">
+          <div class="form-group">
+            <input type="email" 
+                   name="email" 
+                   [(ngModel)]="newsletterEmail" 
+                   placeholder="Enter your email address" 
+                   required 
+                   class="email-input" />
+            <button type="submit" 
+                    class="subscribe-btn" 
+                    [disabled]="!newsletterForm.valid">
+              Subscribe
+            </button>
+          </div>
+        </form>
+        <p class="newsletter-note">We respect your privacy. Unsubscribe at any time.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action Section -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-content">
+        <h2>Ready for an Authentic Indian Experience?</h2>
+        <p>Book your table today and embark on a culinary journey through India's diverse flavors.</p>
+        <div class="cta-buttons">
+          <button class="btn-primary btn-large" routerLink="/contactus">Make Reservation</button>
+          <button class="btn-secondary btn-large" routerLink="/menu">Browse Menu</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

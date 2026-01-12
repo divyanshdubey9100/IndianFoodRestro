@@ -1,0 +1,46 @@
+<div class="page-not-found-container">
+  <div class="error-content">
+    <div class="error-animation">
+      <div class="number">4</div>
+      <div class="plate">
+        <div class="food-icon">🍛</div>
+      </div>
+      <div class="number">4</div>
+    </div>
+    
+    <h1 class="error-title">Oops! Dish Not Found</h1>
+    <p class="error-message">
+      The page you're looking for seems to have been eaten! 
+      Maybe it was too delicious to resist.
+    </p>
+    
+    <div class="suggestions">
+      <h3>What can you do?</h3>
+      <ul>
+        <li>Check if you typed the URL correctly</li>
+        <li>Go back to our delicious <a routerLink="/" class="link">Home Page</a></li>
+        <li>Browse our amazing <a routerLink="/menu" class="link">Menu</a></li>
+        <li>Learn more <a routerLink="/about-us" class="link">About Us</a></li>
+      </ul>
+    </div>
+    
+    <div class="action-buttons">
+      <button class="btn-primary" (click)="goHome()">
+        <span class="btn-icon">🏠</span>
+        Take Me Home
+      </button>
+      <button class="btn-secondary" (click)="goBack()">
+        <span class="btn-icon">⬅️</span>
+        Go Back
+      </button>
+    </div>
+  </div>
+  
+  <div class="floating-food">
+    <div class="food-item" style="--delay: 0s">🍕</div>
+    <div class="food-item" style="--delay: 1s">🍔</div>
+    <div class="food-item" style="--delay: 2s">🌮</div>
+    <div class="food-item" style="--delay: 0.5s">🍜</div>
+    <div class="food-item" style="--delay: 1.5s">🥘</div>
+  </div>
+</div>

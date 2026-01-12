@@ -1,0 +1,59 @@
+/* header.component.css */
+
+/* Ensure header stands out and content is spaced below */
+:host {
+  display: block;
+  margin-bottom: 56px; /* Height of navbar */
+}
+
+/* Navbar brand styling */
+.navbar-brand {
+  font-size: 1.5rem;
+  letter-spacing: 1px;
+}
+
+/* Highlight active link */
+.nav-link.active {
+  font-weight: bold;
+  color: #ffc107 !important; /* Bootstrap warning color */
+  border-bottom: 2px solid #ffc107;
+}
+
+/* Hover effect for nav links */
+.nav-link:hover {
+  color: #f8f9fa !important;
+  background: rgba(255,255,255,0.1);
+  border-radius: 4px;
+}
+
+/* Login button styling */
+.btn-light {
+  color: #ffffff; /* Bootstrap primary color for better contrast */
+  font-weight: 500;
+  transition: background 0.2s, color 0.2s;
+}
+
+.btn-light:hover {
+  background: #ffc107;
+  color: #212529;
+}
+
+/* Improve Login button alignment in navbar */
+.navbar-nav {
+  align-items: center;
+}
+
+.nav-item:last-child .nav-link.btn {
+  margin-left: 1rem;
+  margin-top: 0;
+  margin-bottom: 0;
+  vertical-align: middle;
+  display: inline-block;
+}
+
+/* Responsive gap for nav items */
+@media (max-width: 991px) {
+  .navbar-nav {
+    gap: 0.5rem;
+  }
+}

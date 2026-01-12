@@ -1,0 +1,322 @@
+<div class="contact-container">
+  <!-- Hero Section -->
+  <section class="contact-hero">
+    <div class="hero-content">
+      <h1>Contact Us</h1>
+      <p class="hero-subtitle">Get in Touch with Spice Palace</p>
+      <p class="hero-description">We'd love to hear from you! Whether you have questions, feedback, or want to make a reservation, we're here to help.</p>
+    </div>
+  </section>
+
+  <!-- Contact Form & Info Section -->
+  <section class="contact-main-section">
+    <div class="container">
+      <div class="row">
+        <!-- Contact Form -->
+        <div class="col-md-8">
+          <div class="contact-form-container">
+            <h2>Send Us a Message</h2>
+            <form class="contact-form" (ngSubmit)="submitContactForm()" #contactForm="ngForm">
+              <div class="form-row">
+                <div class="form-group half-width">
+                  <label for="firstName">First Name *</label>
+                  <input type="text" 
+                         id="firstName" 
+                         name="firstName" 
+                         [(ngModel)]="contactData.firstName" 
+                         required
+                         class="form-control"
+                         [class.error]="isFieldInvalid('firstName', contactForm)">
+                  <div class="error-message" *ngIf="isFieldInvalid('firstName', contactForm)">
+                    First name is required
+                  </div>
+                </div>
+                <div class="form-group half-width">
+                  <label for="lastName">Last Name *</label>
+                  <input type="text" 
+                         id="lastName" 
+                         name="lastName" 
+                         [(ngModel)]="contactData.lastName" 
+                         required
+                         class="form-control"
+                         [class.error]="isFieldInvalid('lastName', contactForm)">
+                  <div class="error-message" *ngIf="isFieldInvalid('lastName', contactForm)">
+                    Last name is required
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group half-width">
+                  <label for="email">Email Address *</label>
+                  <input type="email" 
+                         id="email" 
+                         name="email" 
+                         [(ngModel)]="contactData.email" 
+                         required
+                         email
+                         class="form-control"
+                         [class.error]="isFieldInvalid('email', contactForm)">
+                  <div class="error-message" *ngIf="isFieldInvalid('email', contactForm)">
+                    Please enter a valid email address
+                  </div>
+                </div>
+                <div class="form-group half-width">
+                  <label for="phone">Phone Number</label>
+                  <input type="tel" 
+                         id="phone" 
+                         name="phone" 
+                         [(ngModel)]="contactData.phone" 
+                         class="form-control">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="subject">Subject *</label>
+                <select id="subject" 
+                        name="subject" 
+                        [(ngModel)]="contactData.subject" 
+                        required
+                        class="form-control"
+                        [class.error]="isFieldInvalid('subject', contactForm)">
+                  <option value="">Select a subject</option>
+                  <option value="reservation">Table Reservation</option>
+                  <option value="catering">Catering Inquiry</option>
+                  <option value="feedback">Feedback</option>
+                  <option value="complaint">Complaint</option>
+                  <option value="general">General Inquiry</option>
+                  <option value="other">Other</option>
+                </select>
+                <div class="error-message" *ngIf="isFieldInvalid('subject', contactForm)">
+                  Please select a subject
+                </div>
+              </div>
+
+              <div class="form-group" *ngIf="contactData.subject === 'reservation'">
+                <label for="reservationDetails">Reservation Details</label>
+                <div class="reservation-fields">
+                  <div class="reservation-row">
+                    <div class="reservation-field">
+                      <label for="reservationDate">Preferred Date</label>
+                      <input type="date" 
+                             id="reservationDate" 
+                             name="reservationDate" 
+                             [(ngModel)]="contactData.reservationDate" 
+                             class="form-control"
+                             [min]="today">
+                    </div>
+                    <div class="reservation-field">
+                      <label for="reservationTime">Preferred Time</label>
+                      <select id="reservationTime" 
+                              name="reservationTime" 
+                              [(ngModel)]="contactData.reservationTime" 
+                              class="form-control">
+                        <option value="">Select time</option>
+                        <option value="11:00">11:00 AM</option>
+                        <option value="11:30">11:30 AM</option>
+                        <option value="12:00">12:00 PM</option>
+                        <option value="12:30">12:30 PM</option>
+                        <option value="13:00">1:00 PM</option>
+                        <option value="13:30">1:30 PM</option>
+                        <option value="14:00">2:00 PM</option>
+                        <option value="18:00">6:00 PM</option>
+                        <option value="18:30">6:30 PM</option>
+                        <option value="19:00">7:00 PM</option>
+                        <option value="19:30">7:30 PM</option>
+                        <option value="20:00">8:00 PM</option>
+                        <option value="20:30">8:30 PM</option>
+                        <option value="21:00">9:00 PM</option>
+                      </select>
+                    </div>
+                    <div class="reservation-field">
+                      <label for="partySize">Party Size</label>
+                      <select id="partySize" 
+                              name="partySize" 
+                              [(ngModel)]="contactData.partySize" 
+                              class="form-control">
+                        <option value="">Select size</option>
+                        <option value="1">1 person</option>
+                        <option value="2">2 people</option>
+                        <option value="3">3 people</option>
+                        <option value="4">4 people</option>
+                        <option value="5">5 people</option>
+                        <option value="6">6 people</option>
+                        <option value="7">7 people</option>
+                        <option value="8">8 people</option>
+                        <option value="more">More than 8</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="message">Message *</label>
+                <textarea id="message" 
+                          name="message" 
+                          [(ngModel)]="contactData.message" 
+                          required
+                          rows="5" 
+                          class="form-control"
+                          [class.error]="isFieldInvalid('message', contactForm)"
+                          placeholder="Please provide details about your inquiry..."></textarea>
+                <div class="error-message" *ngIf="isFieldInvalid('message', contactForm)">
+                  Message is required
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="checkbox-label">
+                  <input type="checkbox" 
+                         name="subscribe" 
+                         [(ngModel)]="contactData.subscribe">
+                  <span class="checkmark"></span>
+                  Subscribe to our newsletter for special offers and updates
+                </label>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" 
+                        class="btn-primary btn-large" 
+                        [disabled]="!contactForm.valid || isSubmitting">
+                  <span *ngIf="!isSubmitting">Send Message</span>
+                  <span *ngIf="isSubmitting">Sending...</span>
+                </button>
+                <button type="button" 
+                        class="btn-secondary" 
+                        (click)="resetForm(contactForm)">
+                  Clear Form
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Contact Information -->
+        <div class="col-md-4">
+          <div class="contact-info-container">
+            <h3>Get in Touch</h3>
+            
+            <div class="contact-info-item">
+              <div class="info-icon">📍</div>
+              <div class="info-content">
+                <h4>Address</h4>
+                <p>123 Spice Avenue<br>
+                   Food District, Flavor City<br>
+                   FC 12345</p>
+              </div>
+            </div>
+
+            <div class="contact-info-item">
+              <div class="info-icon">📞</div>
+              <div class="info-content">
+                <h4>Phone</h4>
+                <p><a href="tel:+15551234567">+1 (555) 123-4567</a></p>
+              </div>
+            </div>
+
+            <div class="contact-info-item">
+              <div class="info-icon">📧</div>
+              <div class="info-content">
+                <h4>Email</h4>
+                <p><a href="mailto:info@spicepalace.com">info&#64;spicepalace.com</a></p>
+              </div>
+            </div>
+
+            <div class="contact-info-item">
+              <div class="info-icon">⏰</div>
+              <div class="info-content">
+                <h4>Hours</h4>
+                <div class="hours-list">
+                  <div class="hours-item" *ngFor="let hours of operatingHours">
+                    <span class="day">{{ hours.day }}:</span>
+                    <span class="time">{{ hours.time }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="social-media">
+              <h4>Follow Us</h4>
+              <div class="social-links">
+                <a href="#" class="social-link facebook" title="Facebook">📘</a>
+                <a href="#" class="social-link instagram" title="Instagram">📷</a>
+                <a href="#" class="social-link twitter" title="Twitter">🐦</a>
+                <a href="#" class="social-link youtube" title="YouTube">📺</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Map Section -->
+  <section class="map-section">
+    <div class="container">
+      <h2 class="section-title">Find Us</h2>
+      <div class="map-container">
+        <div class="map-placeholder" (click)="openMap()">
+          <div class="map-icon">🗺️</div>
+          <h3>Interactive Map</h3>
+          <p>123 Spice Avenue, Food District</p>
+          <p class="map-note">Click to view directions in Google Maps</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="faq-section">
+    <div class="container">
+      <h2 class="section-title">Frequently Asked Questions</h2>
+      <div class="faq-grid">
+        <div class="faq-item" *ngFor="let faq of frequentlyAskedQuestions; let i = index">
+          <div class="faq-question" (click)="toggleFAQ(i)" [class.active]="faq.isOpen">
+            <h4>{{ faq.question }}</h4>
+            <span class="faq-toggle">{{ faq.isOpen ? '−' : '+' }}</span>
+          </div>
+          <div class="faq-answer" [class.open]="faq.isOpen">
+            <p>{{ faq.answer }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Special Notice Section -->
+  <section class="notice-section">
+    <div class="container">
+      <div class="notice-content">
+        <div class="notice-icon">📢</div>
+        <div class="notice-text">
+          <h3>Important Notice</h3>
+          <p>For large group reservations (8+ people) or special events, please call us directly at <strong>+1 (555) 123-4567</strong> or email <strong>events&#64;spicepalace.com</strong> at least 24 hours in advance.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Success Modal -->
+<div class="modal-overlay" *ngIf="showSuccessModal" (click)="closeSuccessModal()">
+  <div class="modal-content success-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="success-icon">✅</div>
+      <h3>Message Sent Successfully!</h3>
+      <button class="modal-close" (click)="closeSuccessModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p>Thank you for contacting Spice Palace! We have received your message and will get back to you within 24 hours.</p>
+      <p *ngIf="contactData.subject === 'reservation'">
+        <strong>Reservation Request:</strong><br>
+        Date: {{ contactData.reservationDate | date:'medium' }}<br>
+        Time: {{ contactData.reservationTime }}<br>
+        Party Size: {{ contactData.partySize }} {{ contactData.partySize === '1' ? 'person' : 'people' }}
+      </p>
+      <div class="modal-actions">
+        <button class="btn-primary" (click)="closeSuccessModal()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

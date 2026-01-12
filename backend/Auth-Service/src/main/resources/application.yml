@@ -1,0 +1,33 @@
+server:
+  port: 9091
+
+spring:
+  application:
+    name: Auth-Service
+
+  thymeleaf:
+    check-template-location: false   # Disable Thymeleaf template check (for REST APIs)
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/indian_food_db
+    username: indian_food_restro
+    password: indian_food_restro
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      idle-timeout: 30000
+      connection-timeout: 20000
+      max-lifetime: 1800000
+      pool-name: HikariPool-Auth
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc.lob.non_contextual_creation: true

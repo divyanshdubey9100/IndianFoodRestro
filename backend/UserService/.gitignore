@@ -1,0 +1,46 @@
+# Ignore Maven target directory
+/target/
+
+# Ignore Maven wrapper files
+.mvn/
+mvnw
+mvnw.cmd
+
+# Ignore IDE-specific files
+.idea/
+*.iml
+*.iws
+*.ipr
+.classpath
+.project
+.settings/
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore log files
+*.log
+
+# Ignore application properties (optional, if not needed in version control)
+src/main/resources/application.properties
+src/main/resources/application.yml
+
+# Ignore IntelliJ IDEA project files
+.idea/
+
+# Ignore Eclipse project files
+.classpath
+.project
+.settings/
+
+# Ignore NetBeans project files
+nbproject/
+
+# Ignore VS Code workspace files
+.vscode/
+
+# Ignore temporary files
+*.swp
+*.swo
+*~
