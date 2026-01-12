@@ -158,5 +158,4 @@ export class RegisterComponent implements OnInit{
   toggleConfirmPasswordVisibility(): void {
     this.showConfirmPassword = !this.showConfirmPassword;
   }
-  
 }
