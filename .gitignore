@@ -15,6 +15,7 @@ Thumbs.db
 .project
 .classpath
 .settings/
+.editorconfig
 
 ############################################
 # Angular / Node
