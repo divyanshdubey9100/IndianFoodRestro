@@ -1,6 +1,6 @@
 <form [formGroup]="registerUserForm" (ngSubmit)="onSubmitUserForm()" class="register-form">
   <h2 class="mb-4">Register</h2>
-  
+
   <div class="mb-3">
     <label for="firstName" class="form-label">First Name *</label>
     <input
@@ -9,11 +9,13 @@
       formControlName="firstName"
       placeholder="First Name"
     />
-    <div *ngIf="showErrors(getControl('firstName'))" class="text-danger mt-1">
-      {{ getErrorMessage('firstName') }}
-    </div>
+    @if (showErrors(getControl('firstName'))) {
+      <div class="text-danger mt-1">
+        {{ getErrorMessage('firstName') }}
+      </div>
+    }
   </div>
-  
+
   <div class="mb-3">
     <label for="middleName" class="form-label">Middle Name</label>
     <input
@@ -22,11 +24,13 @@
       class="form-control mt-2"
       placeholder="Middle Name"
     />
-    <div *ngIf="showErrors(getControl('middleName'))" class="text-danger mt-1">
-      {{ getErrorMessage('middleName') }}
-    </div>
+    @if (showErrors(getControl('middleName'))) {
+      <div class="text-danger mt-1">
+        {{ getErrorMessage('middleName') }}
+      </div>
+    }
   </div>
-  
+
   <div class="mb-3">
     <label for="lastName" class="form-label">Last Name *</label>
     <input
@@ -35,11 +39,13 @@
       class="form-control mt-2"
       placeholder="Last Name"
     />
-    <div *ngIf="showErrors(getControl('lastName'))" class="text-danger mt-1">
-      {{ getErrorMessage('lastName') }}
-    </div>
+    @if (showErrors(getControl('lastName'))) {
+      <div class="text-danger mt-1">
+        {{ getErrorMessage('lastName') }}
+      </div>
+    }
   </div>
-  
+
   <div class="mb-3">
     <label for="mobile" class="form-label">Mobile *</label>
     <input
@@ -48,78 +54,61 @@
       class="form-control mt-2"
       placeholder="Mobile No."
     />
-    <div *ngIf="showErrors(getControl('mobile'))" class="text-danger mt-1">
-      {{ getErrorMessage('mobile') }}
-    </div>
+    @if (showErrors(getControl('mobile'))) {
+      <div class="text-danger mt-1">
+        {{ getErrorMessage('mobile') }}
+      </div>
+    }
   </div>
-  
+
   <div class="mb-3">
     <label for="dob" class="form-label">Date of Birth *</label>
-    <app-date-picker
-      id="dob"
-      formControlName="dob">
-    </app-date-picker>
-    <div *ngIf="showErrors(getControl('dob'))" class="text-danger mt-1">
-      {{ getErrorMessage('dob') }}
-    </div>
+    <app-date-picker id="dob" formControlName="dob"></app-date-picker>
+    @if (showErrors(getControl('dob'))) {
+      <div class="text-danger mt-1">
+        {{ getErrorMessage('dob') }}
+      </div>
+    }
   </div>
-  
+
   <div class="mb-3">
     <label class="form-label">Gender *</label>
     <div>
       <div class="form-check form-check-inline">
-        <input
-          class="form-check-input"
-          type="radio"
-          id="male"
-          value="Male"
-          formControlName="gender"
-        />
+        <input class="form-check-input" type="radio" id="male" value="Male" formControlName="gender" />
         <label class="form-check-label" for="male">Male</label>
       </div>
       <div class="form-check form-check-inline">
-        <input
-          class="form-check-input"
-          type="radio"
-          id="female"
-          value="Female"
-          formControlName="gender"
-        />
+        <input class="form-check-input" type="radio" id="female" value="Female" formControlName="gender" />
         <label class="form-check-label" for="female">Female</label>
       </div>
       <div class="form-check form-check-inline">
-        <input
-          class="form-check-input"
-          type="radio"
-          id="other"
-          value="Other"
-          formControlName="gender"
-        />
+        <input class="form-check-input" type="radio" id="other" value="Other" formControlName="gender" />
         <label class="form-check-label" for="other">Other</label>
       </div>
     </div>
-    <div *ngIf="showErrors(getControl('gender'))" class="text-danger mt-1">
-      {{ getErrorMessage('gender') }}
-    </div>
+    @if (showErrors(getControl('gender'))) {
+      <div class="text-danger mt-1">
+        {{ getErrorMessage('gender') }}
+      </div>
+    }
   </div>
-  
+
   <div class="mb-3">
     <label for="userType" class="form-label">User Type *</label>
-    <select
-      id="userType"
-      class="form-select"
-      formControlName="userType"
-    >
+    <select id="userType" class="form-select" formControlName="userType">
       <option value="" disabled>Select user type</option>
       <option value="Customer">Customer</option>
       <option value="Admin">Admin</option>
       <option value="Staff">Staff</option>
     </select>
-    <div *ngIf="showErrors(getControl('userType'))" class="text-danger mt-1">
-      {{ getErrorMessage('userType') }}
-    </div>
+    @if (showErrors(getControl('userType'))) {
+      <div class="text-danger mt-1">
+        {{ getErrorMessage('userType') }}
+      </div>
+    }
   </div>
-  
+
   <div class="mb-3">
     <label for="email" class="form-label">Email *</label>
     <input
@@ -129,11 +118,13 @@
       formControlName="email"
       placeholder="Email Address"
     />
-    <div *ngIf="showErrors(getControl('email'))" class="text-danger mt-1">
-      {{ getErrorMessage('email') }}
-    </div>
+    @if (showErrors(getControl('email'))) {
+      <div class="text-danger mt-1">
+        {{ getErrorMessage('email') }}
+      </div>
+    }
   </div>
-  
+
   <div class="mb-3">
     <label for="password" class="form-label">Password *</label>
     <div class="input-group">
@@ -148,16 +139,17 @@
         type="button"
         class="btn btn-outline-secondary"
         (click)="togglePasswordVisibility()"
-        [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
       >
         {{ showPassword ? '👁️‍🗨️ Hide' : '👁️ Show' }}
       </button>
     </div>
-    <div *ngIf="showErrors(getControl('password'))" class="text-danger mt-1">
-      {{ getErrorMessage('password') }}
-    </div>
+    @if (showErrors(getControl('password'))) {
+      <div class="text-danger mt-1">
+        {{ getErrorMessage('password') }}
+      </div>
+    }
   </div>
-  
+
   <div class="mb-3">
     <label for="confirmPassword" class="form-label">Confirm Password *</label>
     <div class="input-group">
@@ -172,25 +164,28 @@
         type="button"
         class="btn btn-outline-secondary"
         (click)="toggleConfirmPasswordVisibility()"
-        [attr.aria-label]="showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'"
       >
         {{ showConfirmPassword ? '👁️‍🗨️ Hide' : '👁️ Show' }}
       </button>
     </div>
-    <div *ngIf="showErrors(getControl('confirmPassword'))" class="text-danger mt-1">
-      {{ getErrorMessage('confirmPassword') }}
-    </div>
+    @if (showErrors(getControl('confirmPassword'))) {
+      <div class="text-danger mt-1">
+        {{ getErrorMessage('confirmPassword') }}
+      </div>
+    }
   </div>
-  
-  <button 
-    type="submit" 
-    class="btn btn-primary w-100" 
+
+  <button
+    type="submit"
+    class="btn btn-primary w-100"
     [disabled]="registerUserForm.invalid || isSubmitting"
   >
-    <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status"></span>
+    @if (isSubmitting) {
+      <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+    }
     {{ isSubmitting ? 'Registering...' : 'Register' }}
   </button>
-  
+
   <div class="mt-3 text-center">
     <span>Already registered?</span>
     <a routerLink="/login" class="btn btn-link">Login here</a>
