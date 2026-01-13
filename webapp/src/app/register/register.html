@@ -1,9 +1,10 @@
 <form [formGroup]="registerUserForm" (ngSubmit)="onSubmitUserForm()" class="register-form">
   <h2 class="mb-4">Register</h2>
   
-   <div class="mb-3">
+  <div class="mb-3">
     <label for="firstName" class="form-label">First Name *</label>
     <input
+      id="firstName"
       class="form-control mt-2"
       formControlName="firstName"
       placeholder="First Name"
@@ -12,9 +13,11 @@
       {{ getErrorMessage('firstName') }}
     </div>
   </div>
-   <div class="mb-3">
+  
+  <div class="mb-3">
     <label for="middleName" class="form-label">Middle Name</label>
     <input
+      id="middleName"
       formControlName="middleName"
       class="form-control mt-2"
       placeholder="Middle Name"
@@ -23,9 +26,11 @@
       {{ getErrorMessage('middleName') }}
     </div>
   </div>
+  
   <div class="mb-3">
     <label for="lastName" class="form-label">Last Name *</label>
     <input
+      id="lastName"
       formControlName="lastName"
       class="form-control mt-2"
       placeholder="Last Name"
@@ -33,19 +38,22 @@
     <div *ngIf="showErrors(getControl('lastName'))" class="text-danger mt-1">
       {{ getErrorMessage('lastName') }}
     </div>
-    </div>
+  </div>
+  
   <div class="mb-3">
     <label for="mobile" class="form-label">Mobile *</label>
     <input
+      id="mobile"
       formControlName="mobile"
       class="form-control mt-2"
       placeholder="Mobile No."
     />
-     <div *ngIf="showErrors(getControl('mobile'))" class="text-danger mt-1">
+    <div *ngIf="showErrors(getControl('mobile'))" class="text-danger mt-1">
       {{ getErrorMessage('mobile') }}
     </div>
   </div>
-   <div class="mb-3">
+  
+  <div class="mb-3">
     <label for="dob" class="form-label">Date of Birth *</label>
     <app-date-picker
       id="dob"
@@ -55,20 +63,17 @@
       {{ getErrorMessage('dob') }}
     </div>
   </div>
-  <!--<div class="mb-3">
+  
+  <div class="mb-3">
     <label class="form-label">Gender *</label>
     <div>
       <div class="form-check form-check-inline">
         <input
           class="form-check-input"
           type="radio"
-          name="gender"
           id="male"
           value="Male"
-          required
-          [(ngModel)]="gender"
-          #genderCtrl="ngModel"
-          [disabled]="isLoading"
+          formControlName="gender"
         />
         <label class="form-check-label" for="male">Male</label>
       </div>
@@ -76,12 +81,9 @@
         <input
           class="form-check-input"
           type="radio"
-          name="gender"
           id="female"
           value="Female"
-          required
-          [(ngModel)]="gender"
-          [disabled]="isLoading"
+          formControlName="gender"
         />
         <label class="form-check-label" for="female">Female</label>
       </div>
@@ -89,38 +91,32 @@
         <input
           class="form-check-input"
           type="radio"
-          name="gender"
           id="other"
           value="Other"
-          required
-          [(ngModel)]="gender"
-          [disabled]="isLoading"
+          formControlName="gender"
         />
         <label class="form-check-label" for="other">Other</label>
       </div>
     </div>
-    <div *ngIf="genderCtrl.invalid && registerForm.submitted" class="text-danger">
-      Gender is required.
+    <div *ngIf="showErrors(getControl('gender'))" class="text-danger mt-1">
+      {{ getErrorMessage('gender') }}
     </div>
   </div>
+  
   <div class="mb-3">
     <label for="userType" class="form-label">User Type *</label>
     <select
       id="userType"
-      name="userType"
       class="form-select"
-      required
-      [(ngModel)]="userType"
-      #userTypeCtrl="ngModel"
-      [disabled]="isLoading"
+      formControlName="userType"
     >
-      <option value="" disabled selected>Select user type</option>
+      <option value="" disabled>Select user type</option>
       <option value="Customer">Customer</option>
       <option value="Admin">Admin</option>
       <option value="Staff">Staff</option>
     </select>
-    <div *ngIf="userTypeCtrl.invalid && userTypeCtrl.touched" class="text-danger">
-      User type is required.
+    <div *ngIf="showErrors(getControl('userType'))" class="text-danger mt-1">
+      {{ getErrorMessage('userType') }}
     </div>
   </div>
   
@@ -129,62 +125,74 @@
     <input
       type="email"
       id="email"
-      name="email"
       class="form-control"
-      required
-      email
-      [(ngModel)]="email"
-      #emailCtrl="ngModel"
-      [disabled]="isLoading"
-      (blur)="checkEmailAvailability()"
+      formControlName="email"
+      placeholder="Email Address"
     />
-    <div *ngIf="emailCtrl.invalid && emailCtrl.touched" class="text-danger">
-      Please enter a valid email address.
+    <div *ngIf="showErrors(getControl('email'))" class="text-danger mt-1">
+      {{ getErrorMessage('email') }}
     </div>
   </div>
   
   <div class="mb-3">
     <label for="password" class="form-label">Password *</label>
-    <input
-      type="password"
-      id="password"
-      name="password"
-      class="form-control"
-      required
-      minlength="6"
-      [(ngModel)]="password"
-      #passwordCtrl="ngModel"
-      [disabled]="isLoading"
-    />
-    <div *ngIf="passwordCtrl.invalid && passwordCtrl.touched" class="text-danger">
-      Password must be at least 6 characters long.
+    <div class="input-group">
+      <input
+        id="password"
+        [type]="showPassword ? 'text' : 'password'"
+        class="form-control"
+        formControlName="password"
+        placeholder="Password"
+      />
+      <button
+        type="button"
+        class="btn btn-outline-secondary"
+        (click)="togglePasswordVisibility()"
+        [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
+      >
+        {{ showPassword ? '👁️‍🗨️ Hide' : '👁️ Show' }}
+      </button>
+    </div>
+    <div *ngIf="showErrors(getControl('password'))" class="text-danger mt-1">
+      {{ getErrorMessage('password') }}
     </div>
   </div>
   
   <div class="mb-3">
     <label for="confirmPassword" class="form-label">Confirm Password *</label>
-    <input
-      type="password"
-      id="confirmPassword"
-      name="confirmPassword"
-      class="form-control"
-      required
-      [(ngModel)]="confirmPassword"
-      #confirmPasswordCtrl="ngModel"
-      [disabled]="isLoading"
-    />
-    <div *ngIf="confirmPasswordCtrl.touched && password !== confirmPassword" class="text-danger">
-      Passwords do not match.
+    <div class="input-group">
+      <input
+        id="confirmPassword"
+        [type]="showConfirmPassword ? 'text' : 'password'"
+        class="form-control"
+        formControlName="confirmPassword"
+        placeholder="Confirm Password"
+      />
+      <button
+        type="button"
+        class="btn btn-outline-secondary"
+        (click)="toggleConfirmPasswordVisibility()"
+        [attr.aria-label]="showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'"
+      >
+        {{ showConfirmPassword ? '👁️‍🗨️ Hide' : '👁️ Show' }}
+      </button>
+    </div>
+    <div *ngIf="showErrors(getControl('confirmPassword'))" class="text-danger mt-1">
+      {{ getErrorMessage('confirmPassword') }}
     </div>
   </div>
-  but
-  <button type="submit" class="btn btn-primary w-100" [disabled]="registerForm.invalid || isLoading || password !== confirmPassword">
-    <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
-    {{ isLoading ? 'Registering...' : 'Register' }}
-  </button>-->
-  <button type="submit">Register</button>
+  
+  <button 
+    type="submit" 
+    class="btn btn-primary w-100" 
+    [disabled]="registerUserForm.invalid || isSubmitting"
+  >
+    <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status"></span>
+    {{ isSubmitting ? 'Registering...' : 'Register' }}
+  </button>
+  
   <div class="mt-3 text-center">
     <span>Already registered?</span>
-    <a routerLink="/sign-in" class="btn btn-link">Login here</a>
+    <a routerLink="/login" class="btn btn-link">Login here</a>
   </div>
 </form>
