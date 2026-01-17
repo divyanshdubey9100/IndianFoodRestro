@@ -159,13 +159,14 @@ jobs:
       ################################
       # Build & Push Auth Service Image
       ################################
-      - name: Build & Push Auth Service Image
+      - name: Build & Push Frontend Image
         run: |
-          cd backend/Auth-Service
+          cd webapp
           docker build \
-            -t docker.io/${{ secrets.DOCKER_USER }}/indianfoodrestro-auth-service:latest \
+            -f DockerFile \
+            -t docker.io/${{ secrets.DOCKER_USER }}/indianfoodrestro-frontend:latest \
             .
-          docker push docker.io/${{ secrets.DOCKER_USER }}/indianfoodrestro-auth-service:latest
+          docker push docker.io/${{ secrets.DOCKER_USER }}/indianfoodrestro-frontend:latest
 
       ################################
       # Build & Push User Service Image
