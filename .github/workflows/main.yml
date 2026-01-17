@@ -149,10 +149,17 @@ jobs:
       ################################
       - name: Build & Push Frontend Image
         run: |
+          echo "Debug: Listing webapp directory contents:"
+          ls -la webapp/  # <--- This will prove if the file is there in the logs
+          
+          # Move into the directory first
+          cd webapp
+          
+          # Build using current directory (.) as context
           docker build \
-            -f webapp/Dockerfile \
             -t docker.io/${{ secrets.DOCKER_USER }}/indianfoodrestro-frontend:latest \
-            webapp
+            .
+            
           docker push docker.io/${{ secrets.DOCKER_USER }}/indianfoodrestro-frontend:latest
 
       ################################
@@ -160,10 +167,10 @@ jobs:
       ################################
       - name: Build & Push Auth Service Image
         run: |
+          cd backend/Auth-Service
           docker build \
-            -f backend/Auth-Service/Dockerfile \
             -t docker.io/${{ secrets.DOCKER_USER }}/indianfoodrestro-auth-service:latest \
-            backend/Auth-Service
+            .
           docker push docker.io/${{ secrets.DOCKER_USER }}/indianfoodrestro-auth-service:latest
 
       ################################
@@ -171,8 +178,8 @@ jobs:
       ################################
       - name: Build & Push User Service Image
         run: |
+          cd backend/User-Service
           docker build \
-            -f backend/User-Service/Dockerfile \
             -t docker.io/${{ secrets.DOCKER_USER }}/indianfoodrestro-user-service:latest \
-            backend/User-Service
+            .
           docker push docker.io/${{ secrets.DOCKER_USER }}/indianfoodrestro-user-service:latest
