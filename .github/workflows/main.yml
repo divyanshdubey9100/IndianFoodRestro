@@ -60,7 +60,11 @@ jobs:
 
       - name: Build Auth Service
         run: |
-          cd backend/auth-service
+          echo "Workspace:"
+          pwd
+          echo "Tree:"
+          ls -R
+          cd backend/auth-service || exit 1
           mvn -B clean verify
 
       - uses: actions/upload-artifact@v4
@@ -89,7 +93,11 @@ jobs:
 
       - name: Build User Service
         run: |
-          cd backend/user-service
+          echo "Workspace:"
+          pwd
+          echo "Tree:"
+          ls -R
+          cd backend/user-service || exit 1
           mvn -B clean verify
 
       - uses: actions/upload-artifact@v4
