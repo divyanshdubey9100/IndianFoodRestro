@@ -5,7 +5,7 @@ stages:
 
 variables:
   CACHE_NPM_PATH: webapp/node_modules/
-  CACHE_MAVEN_PATH: backend/UserService/.m2/repository
+  CACHE_MAVEN_PATH: .m2/repository
   DOCKER_TLS_CERTDIR: ""
 
 cache:
@@ -30,17 +30,30 @@ build-frontend:
       - webapp/dist/
 
 ############################
-# Backend Build
+# Backend Build - Auth Service
 ############################
-build-backend:
+build-auth-service:
   image: maven:3.9.6-eclipse-temurin-21
   stage: build-backend
   script:
-    - cd backend/UserService/
+    - cd backend/auth-service
     - mvn clean install
   artifacts:
     paths:
-      - backend/UserService/target/
+      - backend/auth-service/target/
+
+############################
+# Backend Build - User Service
+############################
+build-user-service:
+  image: maven:3.9.6-eclipse-temurin-21
+  stage: build-backend
+  script:
+    - cd backend/user-service
+    - mvn clean install
+  artifacts:
+    paths:
+      - backend/user-service/target/
 
 ############################
 # Docker Build & Push
@@ -52,7 +65,8 @@ docker-deploy:
     - docker:25-dind
   needs:
     - build-frontend
-    - build-backend
+    - build-auth-service
+    - build-user-service
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
@@ -60,8 +74,12 @@ docker-deploy:
     - docker build -t $CI_REGISTRY_IMAGE/frontend:latest webapp
     - docker push $CI_REGISTRY_IMAGE/frontend:latest
 
-    # Backend Docker Image
-    - docker build -t $CI_REGISTRY_IMAGE/userservice:latest backend/UserService
-    - docker push $CI_REGISTRY_IMAGE/userservice:latest
+    # Auth Service Docker Image
+    - docker build -t $CI_REGISTRY_IMAGE/auth-service:latest backend/auth-service
+    - docker push $CI_REGISTRY_IMAGE/auth-service:latest
+
+    # User Service Docker Image
+    - docker build -t $CI_REGISTRY_IMAGE/user-service:latest backend/user-service
+    - docker push $CI_REGISTRY_IMAGE/user-service:latest
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
