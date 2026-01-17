@@ -151,7 +151,7 @@ jobs:
         run: |
           cd webapp
           docker build \
-            -f DockerFile \    # <--- Explicitly point to the file with Capital F
+            -f DockerFile \
             -t docker.io/${{ secrets.DOCKER_USER }}/indianfoodrestro-frontend:latest \
             .
           docker push docker.io/${{ secrets.DOCKER_USER }}/indianfoodrestro-frontend:latest
@@ -159,14 +159,14 @@ jobs:
       ################################
       # Build & Push Auth Service Image
       ################################
-      - name: Build & Push Frontend Image
+      - name: Build & Push Auth Service Image
         run: |
-          cd webapp
+          cd backend/Auth-Service
           docker build \
             -f DockerFile \
-            -t docker.io/${{ secrets.DOCKER_USER }}/indianfoodrestro-frontend:latest \
+            -t docker.io/${{ secrets.DOCKER_USER }}/indianfoodrestro-auth-service:latest \
             .
-          docker push docker.io/${{ secrets.DOCKER_USER }}/indianfoodrestro-frontend:latest
+          docker push docker.io/${{ secrets.DOCKER_USER }}/indianfoodrestro-auth-service:latest
 
       ################################
       # Build & Push User Service Image
@@ -175,6 +175,7 @@ jobs:
         run: |
           cd backend/User-Service
           docker build \
+            -f DockerFile \
             -t docker.io/${{ secrets.DOCKER_USER }}/indianfoodrestro-user-service:latest \
             .
           docker push docker.io/${{ secrets.DOCKER_USER }}/indianfoodrestro-user-service:latest

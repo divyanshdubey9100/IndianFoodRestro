@@ -19,7 +19,7 @@ RUN rm -rf /usr/share/nginx/html/*
 # COPY the build output. 
 # IMPORTANT: Check your dist folder structure. 
 # In Angular 19, it is usually /dist/project-name/browser
-COPY --from=build /app/dist/indianfoodrestro/browser /usr/share/nginx/html
+COPY --from=build /app/dist/IndianFoodRestro/browser /usr/share/nginx/html
 
 # Expose port 80
 EXPOSE 80
