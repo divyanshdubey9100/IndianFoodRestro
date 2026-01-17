@@ -42,7 +42,7 @@ jobs:
           path: webapp/dist/
 
   ################################
-  # Backend - Spring Boot
+  # Backend - Spring Boot (UserService)
   ################################
   backend:
     name: Backend Build (Spring Boot)
@@ -50,7 +50,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: backend
+        working-directory: backend/UserService
 
     steps:
       - name: Checkout source
@@ -63,14 +63,14 @@ jobs:
           java-version: 21
           cache: maven
 
-      - name: Build & Test services
+      - name: Build & Test service
         run: mvn -B clean verify
 
-      - name: Upload BE artifacts
+      - name: Upload BE artifact
         uses: actions/upload-artifact@v4
         with:
           name: spring-jars
-          path: backend/**/target/*.jar
+          path: backend/UserService/target/*.jar
 
   ################################
   # Integration Stage
