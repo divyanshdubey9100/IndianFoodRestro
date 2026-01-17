@@ -46,12 +46,11 @@ jobs:
     name: Stage 2A - Build Auth Service
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: backend/auth-service
-
     steps:
       - uses: actions/checkout@v4
+
+      - name: Verify Auth Service Directory
+        run: ls backend/auth-service
 
       - uses: actions/setup-java@v4
         with:
@@ -59,7 +58,10 @@ jobs:
           java-version: 21
           cache: maven
 
-      - run: mvn -B clean verify
+      - name: Build Auth Service
+        run: |
+          cd backend/auth-service
+          mvn -B clean verify
 
       - uses: actions/upload-artifact@v4
         with:
@@ -73,12 +75,11 @@ jobs:
     name: Stage 2B - Build User Service
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: backend/user-service
-
     steps:
       - uses: actions/checkout@v4
+
+      - name: Verify User Service Directory
+        run: ls backend/user-service
 
       - uses: actions/setup-java@v4
         with:
@@ -86,7 +87,10 @@ jobs:
           java-version: 21
           cache: maven
 
-      - run: mvn -B clean verify
+      - name: Build User Service
+        run: |
+          cd backend/user-service
+          mvn -B clean verify
 
       - uses: actions/upload-artifact@v4
         with:
@@ -135,8 +139,8 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          username: ${{ secrets.DOCKER_USER }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          username: ${{ github.Docker_USER }}
+          password: ${{ secrets.Docker_TOKEN }}
 
       ################################
       # Build & Push Frontend Image
