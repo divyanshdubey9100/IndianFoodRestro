@@ -8,14 +8,26 @@ export class DateValidationService {
     return (control: AbstractControl): ValidationErrors | null => {
       const value: string = control.value;
 
-      if (!value) return { required: true };
+      // Handle empty value
+      if (!value || value.trim() === '') {
+        return { required: true };
+      }
 
       const parts = value.split('-');
-      if (parts.length !== 3) return { invalidDate: true };
+      if (parts.length !== 3) {
+        return { invalidDate: true };
+      }
 
       const [year, month, day] = parts.map(Number);
+      
+      // Check if parsing resulted in valid numbers
+      if (isNaN(year) || isNaN(month) || isNaN(day)) {
+        return { invalidDate: true };
+      }
+
       const dob = new Date(year, month - 1, day);
 
+      // Validate that the date is actually valid (handles invalid dates like Feb 30)
       if (
         dob.getFullYear() !== year ||
         dob.getMonth() !== month - 1 ||

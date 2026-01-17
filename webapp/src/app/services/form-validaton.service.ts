@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { VALIDATION_PATTERNS } from '../form-validation/form-validation.config';
-import { VALIDATION_ERRORS } from '../validation-message/validation-message.message';
+import { VALIDATION_ERRORS } from '../validation-message/validation-message';
 import { DateValidationService } from './date-validation.service';
 
 @Injectable({ providedIn: 'root' })

@@ -1,0 +1,32 @@
+# ---------- Build Stage ----------
+FROM node:20 AS build
+
+WORKDIR /app
+
+# Copy dependency files first (for better caching)
+COPY package*.json ./
+
+RUN npm ci
+
+# Copy rest of the source code
+COPY . .
+
+# Build Angular app (production)
+RUN npm run build -- --configuration production
+
+
+# ---------- Runtime Stage ----------
+FROM nginx:alpine
+
+# Clean default nginx content
+RUN rm -rf /usr/share/nginx/html/*
+
+# Copy built Angular files to nginx
+# IMPORTANT: If your Angular output folder is different, update this path
+COPY --from=build /app/dist /usr/share/nginx/html
+
+# Expose port 80
+EXPOSE 80
+
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]
