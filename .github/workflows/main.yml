@@ -167,10 +167,10 @@ jobs:
       - name: Build & Push Auth Service Image
         run: |
           docker build \
-            -f backend/Auth-Service/Dockerfile \
-            -t ghcr.io/${{ github.repository_owner }}/indianfoodrestro-Auth-Service:latest \
-            backend/Auth-Service
-          docker push ghcr.io/${{ github.repository_owner }}/indianfoodrestro-Auth-Service:latest
+            -f backend/auth-service/Dockerfile \
+            -t ghcr.io/${{ github.repository_owner }}/indianfoodrestro-auth-service:latest \
+            backend/auth-service
+          docker push ghcr.io/${{ github.repository_owner }}/indianfoodrestro-auth-service:latest
 
       ################################
       # Build & Push User Service Image
@@ -178,7 +178,7 @@ jobs:
       - name: Build & Push User Service Image
         run: |
           docker build \
-            -f backend/User-Service/Dockerfile \
-            -t ghcr.io/${{ github.repository_owner }}/indianfoodrestro-User-Service:latest \
-            backend/User-Service
-          docker push ghcr.io/${{ github.repository_owner }}/indianfoodrestro-User-Service:latest
+            -f backend/user-service/Dockerfile \
+            -t ghcr.io/${{ github.repository_owner }}/indianfoodrestro-user-service:latest \
+            backend/user-service
+          docker push ghcr.io/${{ github.repository_owner }}/indianfoodrestro-user-service:latest
