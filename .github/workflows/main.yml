@@ -151,7 +151,7 @@ jobs:
         run: |
           cd webapp
           docker build \
-            -f DockerFile \    # <--- Explicitly point to the file with Capital F
+            -f DockerFile \
             -t docker.io/${{ secrets.DOCKER_USER }}/indianfoodrestro-frontend:latest \
             .
           docker push docker.io/${{ secrets.DOCKER_USER }}/indianfoodrestro-frontend:latest
