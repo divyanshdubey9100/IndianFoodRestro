@@ -14,7 +14,6 @@ COPY . .
 # Build Angular app (production)
 RUN npm run build -- --configuration production
 
-
 # ---------- Runtime Stage ----------
 FROM nginx:alpine
 
