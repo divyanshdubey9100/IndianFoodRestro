@@ -50,7 +50,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Verify Auth Service Directory
-        run: ls backend/auth-service
+        run: ls backend/Auth-Service
 
       - uses: actions/setup-java@v4
         with:
@@ -64,13 +64,13 @@ jobs:
           pwd
           echo "Tree:"
           ls -R
-          cd backend/auth-service || exit 1
+          cd backend/Auth-Service || exit 1
           mvn -B clean verify
 
       - uses: actions/upload-artifact@v4
         with:
           name: auth-service-jar
-          path: backend/auth-service/target/*.jar
+          path: backend/Auth-Service/target/*.jar
 
   ################################
   # STAGE 2B: Build Backend - User Service
@@ -83,7 +83,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Verify User Service Directory
-        run: ls backend/user-service
+        run: ls backend/User-Service
 
       - uses: actions/setup-java@v4
         with:
@@ -97,18 +97,18 @@ jobs:
           pwd
           echo "Tree:"
           ls -R
-          cd backend/user-service || exit 1
+          cd backend/User-Service || exit 1
           mvn -B clean verify
 
       - uses: actions/upload-artifact@v4
         with:
           name: user-service-jar
-          path: backend/user-service/target/*.jar
+          path: backend/User-Service/target/*.jar
 
-    ################################
-    # STAGE 3: Deploy (Docker Images)
-    ################################
-    deploy:
+  ################################
+  # STAGE 3: Deploy (Docker Images)
+  ################################
+  deploy:
       name: Stage 3 - Deploy (Docker Images)
       runs-on: ubuntu-latest
 
@@ -133,12 +133,12 @@ jobs:
         - uses: actions/download-artifact@v4
           with:
             name: auth-service-jar
-            path: backend/auth-service/target/
+            path: backend/Auth-Service/target/
 
         - uses: actions/download-artifact@v4
           with:
             name: user-service-jar
-            path: backend/user-service/target/
+            path: backend/User-Service/target/
 
         ################################
         # Docker Hub Login
@@ -167,9 +167,9 @@ jobs:
         - name: Build & Push Auth Service Image
           run: |
             docker build \
-              -f backend/auth-service/Dockerfile \
+              -f backend/Auth-Service/Dockerfile \
               -t docker.io/${{ secrets.DOCKER_USER }}/indianfoodrestro-auth-service:latest \
-              backend/auth-service
+              backend/Auth-Service
             docker push docker.io/${{ secrets.DOCKER_USER }}/indianfoodrestro-auth-service:latest
 
         ################################
@@ -178,7 +178,7 @@ jobs:
         - name: Build & Push User Service Image
           run: |
             docker build \
-              -f backend/user-service/Dockerfile \
+              -f backend/User-Service/Dockerfile \
               -t docker.io/${{ secrets.DOCKER_USER }}/indianfoodrestro-user-service:latest \
-              backend/user-service
+              backend/User-Service
             docker push docker.io/${{ secrets.DOCKER_USER }}/indianfoodrestro-user-service:latest
