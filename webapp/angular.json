@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "IndianFoodRestro": {
+    "Indian-Food-Restro": {
       "projectType": "application",
       "schematics": {},
       "root": "",
