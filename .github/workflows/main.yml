@@ -149,17 +149,11 @@ jobs:
       ################################
       - name: Build & Push Frontend Image
         run: |
-          echo "Debug: Listing webapp directory contents:"
-          ls -la webapp/  # <--- This will prove if the file is there in the logs
-          
-          # Move into the directory first
           cd webapp
-          
-          # Build using current directory (.) as context
           docker build \
+            -f DockerFile \    # <--- Explicitly point to the file with Capital F
             -t docker.io/${{ secrets.DOCKER_USER }}/indianfoodrestro-frontend:latest \
             .
-            
           docker push docker.io/${{ secrets.DOCKER_USER }}/indianfoodrestro-frontend:latest
 
       ################################
