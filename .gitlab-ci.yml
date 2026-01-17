@@ -1,10 +1,12 @@
 stages:
   - build-frontend
   - build-backend
+  - docker-deploy
 
 variables:
   CACHE_NPM_PATH: webapp/node_modules/
   CACHE_MAVEN_PATH: backend/UserService/.m2/repository
+  DOCKER_TLS_CERTDIR: ""
 
 cache:
   key: "${CI_COMMIT_REF_SLUG}"
@@ -12,6 +14,9 @@ cache:
     - $CACHE_NPM_PATH
     - $CACHE_MAVEN_PATH
 
+############################
+# Frontend Build
+############################
 build-frontend:
   image: node:20
   stage: build-frontend
@@ -24,6 +29,9 @@ build-frontend:
     paths:
       - webapp/dist/
 
+############################
+# Backend Build
+############################
 build-backend:
   image: maven:3.9.6-eclipse-temurin-21
   stage: build-backend
@@ -33,3 +41,27 @@ build-backend:
   artifacts:
     paths:
       - backend/UserService/target/
+
+############################
+# Docker Build & Push
+############################
+docker-deploy:
+  image: docker:25
+  stage: docker-deploy
+  services:
+    - docker:25-dind
+  needs:
+    - build-frontend
+    - build-backend
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  script:
+    # Frontend Docker Image
+    - docker build -t $CI_REGISTRY_IMAGE/frontend:latest webapp
+    - docker push $CI_REGISTRY_IMAGE/frontend:latest
+
+    # Backend Docker Image
+    - docker build -t $CI_REGISTRY_IMAGE/userservice:latest backend/UserService
+    - docker push $CI_REGISTRY_IMAGE/userservice:latest
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
