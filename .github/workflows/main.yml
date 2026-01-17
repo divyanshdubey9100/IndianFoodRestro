@@ -182,3 +182,4 @@ jobs:
               -t docker.io/${{ secrets.DOCKER_USER }}/indianfoodrestro-user-service:latest \
               backend/user-service
             docker push docker.io/${{ secrets.DOCKER_USER }}/indianfoodrestro-user-service:latest
+            
