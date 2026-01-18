@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl, FormControl } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 import { FormValidatorService } from '../services/form-validaton.service';
 import { DatePickerComponent } from '../date-picker/date-picker.component';
 
@@ -9,10 +9,7 @@ import { DatePickerComponent } from '../date-picker/date-picker.component';
   standalone: true,
   templateUrl: './register.html',
   styleUrls: ['./register.css'],
-  imports: [CommonModule, 
-            ReactiveFormsModule,
-            DatePickerComponent         
-          ],
+  imports: [ReactiveFormsModule, DatePickerComponent],
 })
 export class RegisterComponent implements OnInit{
  

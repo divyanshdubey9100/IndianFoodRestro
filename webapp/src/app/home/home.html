@@ -23,28 +23,32 @@
       <h2 class="section-title">Our Signature Dishes</h2>
       <p class="section-subtitle">Discover the authentic tastes that have made us a local favorite</p>
       <div class="dishes-grid">
-        <div class="dish-card" *ngFor="let dish of featuredDishes">
-          <div class="dish-image">
-            <img [src]="dish.image" [alt]="dish.name" />
-            <div class="dish-overlay">
-              <button class="view-recipe-btn" (click)="viewDish(dish)">View Details</button>
+        @for (dish of featuredDishes; track dish) {
+          <div class="dish-card">
+            <div class="dish-image">
+              <img [src]="dish.image" [alt]="dish.name" />
+              <div class="dish-overlay">
+                <button class="view-recipe-btn" (click)="viewDish(dish)">View Details</button>
+              </div>
+            </div>
+            <div class="dish-info">
+              <h3>{{ dish.name }}</h3>
+              <p class="dish-description">{{ dish.description }}</p>
+              <div class="dish-meta">
+                <span class="price">${{ dish.price }}</span>
+                <span class="rating">
+                  <span class="stars" [innerHTML]="getStarRating(dish.rating)"></span>
+                  ({{ dish.rating }})
+                </span>
+              </div>
+              <div class="dish-tags">
+                @for (tag of dish.tags; track tag) {
+                  <span class="tag">{{ tag }}</span>
+                }
+              </div>
             </div>
           </div>
-          <div class="dish-info">
-            <h3>{{ dish.name }}</h3>
-            <p class="dish-description">{{ dish.description }}</p>
-            <div class="dish-meta">
-              <span class="price">${{ dish.price }}</span>
-              <span class="rating">
-                <span class="stars" [innerHTML]="getStarRating(dish.rating)"></span>
-                ({{ dish.rating }})
-              </span>
-            </div>
-            <div class="dish-tags">
-              <span class="tag" *ngFor="let tag of dish.tags">{{ tag }}</span>
-            </div>
-          </div>
-        </div>
+        }
       </div>
       <div class="view-all-container">
         <button class="btn-outline" routerLink="/menu">View Full Menu</button>
@@ -96,13 +100,15 @@
     <div class="container">
       <h2 class="section-title">Why Choose Spice Palace?</h2>
       <div class="features-grid">
-        <div class="feature-item" *ngFor="let feature of restaurantFeatures">
-          <div class="feature-icon">
-            <i [class]="feature.icon"></i>
+        @for (feature of restaurantFeatures; track feature) {
+          <div class="feature-item">
+            <div class="feature-icon">
+              <i [class]="feature.icon"></i>
+            </div>
+            <h4>{{ feature.title }}</h4>
+            <p>{{ feature.description }}</p>
           </div>
-          <h4>{{ feature.title }}</h4>
-          <p>{{ feature.description }}</p>
-        </div>
+        }
       </div>
     </div>
   </section>
@@ -112,33 +118,37 @@
     <div class="container">
       <h2 class="section-title">What Our Customers Say</h2>
       <div class="testimonials-slider">
-        <div class="testimonial-card" *ngFor="let testimonial of customerTestimonials; let i = index" 
-             [class.active]="i === currentTestimonial">
-          <div class="testimonial-content">
-            <div class="quote-icon">"</div>
-            <p class="testimonial-text">{{ testimonial.text }}</p>
-            <div class="testimonial-author">
-              <div class="author-image">
-                <img [src]="testimonial.image" [alt]="testimonial.name" />
-              </div>
-              <div class="author-info">
-                <h5>{{ testimonial.name }}</h5>
-                <p>{{ testimonial.title }}</p>
-                <div class="rating">
-                  <span [innerHTML]="getStarRating(testimonial.rating)"></span>
+        @for (testimonial of customerTestimonials; track testimonial; let i = $index) {
+          <div class="testimonial-card"
+            [class.active]="i === currentTestimonial">
+            <div class="testimonial-content">
+              <div class="quote-icon">"</div>
+              <p class="testimonial-text">{{ testimonial.text }}</p>
+              <div class="testimonial-author">
+                <div class="author-image">
+                  <img [src]="testimonial.image" [alt]="testimonial.name" />
+                </div>
+                <div class="author-info">
+                  <h5>{{ testimonial.name }}</h5>
+                  <p>{{ testimonial.title }}</p>
+                  <div class="rating">
+                    <span [innerHTML]="getStarRating(testimonial.rating)"></span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        }
       </div>
       <div class="testimonial-controls">
         <button class="prev-btn" (click)="previousTestimonial()">&lt;</button>
         <div class="testimonial-dots">
-          <button *ngFor="let testimonial of customerTestimonials; let i = index" 
-                  class="dot" 
-                  [class.active]="i === currentTestimonial"
-                  (click)="goToTestimonial(i)"></button>
+          @for (testimonial of customerTestimonials; track testimonial; let i = $index) {
+            <button
+              class="dot"
+              [class.active]="i === currentTestimonial"
+            (click)="goToTestimonial(i)"></button>
+          }
         </div>
         <button class="next-btn" (click)="nextTestimonial()">&gt;</button>
       </div>
@@ -150,15 +160,17 @@
     <div class="container">
       <h2 class="section-title">Special Offers</h2>
       <div class="offers-grid">
-        <div class="offer-card" *ngFor="let offer of specialOffers">
-          <div class="offer-badge">{{ offer.discount }}</div>
-          <div class="offer-content">
-            <h3>{{ offer.title }}</h3>
-            <p>{{ offer.description }}</p>
-            <div class="offer-validity">Valid until: {{ offer.validUntil | date:'medium' }}</div>
-            <button class="btn-primary">Claim Offer</button>
+        @for (offer of specialOffers; track offer) {
+          <div class="offer-card">
+            <div class="offer-badge">{{ offer.discount }}</div>
+            <div class="offer-content">
+              <h3>{{ offer.title }}</h3>
+              <p>{{ offer.description }}</p>
+              <div class="offer-validity">Valid until: {{ offer.validUntil | date:'medium' }}</div>
+              <button class="btn-primary">Claim Offer</button>
+            </div>
           </div>
-        </div>
+        }
       </div>
     </div>
   </section>
@@ -189,10 +201,12 @@
               <div class="info-details">
                 <h4>Hours</h4>
                 <div class="hours-list">
-                  <div class="hours-item" *ngFor="let hours of operatingHours">
-                    <span class="day">{{ hours.day }}:</span>
-                    <span class="time">{{ hours.time }}</span>
-                  </div>
+                  @for (hours of operatingHours; track hours) {
+                    <div class="hours-item">
+                      <span class="day">{{ hours.day }}:</span>
+                      <span class="time">{{ hours.time }}</span>
+                    </div>
+                  }
                 </div>
               </div>
             </div>
@@ -219,15 +233,15 @@
         <p>Subscribe to our newsletter for exclusive offers, new dish announcements, and special events.</p>
         <form class="newsletter-form" (ngSubmit)="subscribeNewsletter()" #newsletterForm="ngForm">
           <div class="form-group">
-            <input type="email" 
-                   name="email" 
-                   [(ngModel)]="newsletterEmail" 
-                   placeholder="Enter your email address" 
-                   required 
-                   class="email-input" />
-            <button type="submit" 
-                    class="subscribe-btn" 
-                    [disabled]="!newsletterForm.valid">
+            <input type="email"
+              name="email"
+              [(ngModel)]="newsletterEmail"
+              placeholder="Enter your email address"
+              required
+              class="email-input" />
+            <button type="submit"
+              class="subscribe-btn"
+              [disabled]="!newsletterForm.valid">
               Subscribe
             </button>
           </div>

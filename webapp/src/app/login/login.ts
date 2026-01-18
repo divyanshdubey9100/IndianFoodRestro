@@ -2,14 +2,14 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
-import { CommonModule } from '@angular/common';
+
 
 @Component({
   selector: 'app-login',
   standalone: true,
   templateUrl: './login.html',
   styleUrls: ['./login.css'],
-  imports: [FormsModule, RouterLink, CommonModule]
+  imports: [FormsModule, RouterLink]
 })
 export class LoginComponent {
   email = '';
