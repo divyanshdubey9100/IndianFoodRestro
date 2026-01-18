@@ -1,11 +1,6 @@
 # Ignore Maven target directory
 /target/
 
-# Ignore Maven wrapper files
-.mvn/
-mvnw
-mvnw.cmd
-
 # Ignore IDE-specific files
 .idea/
 *.iml
