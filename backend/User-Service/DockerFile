@@ -1,5 +1,5 @@
 # Stage 1: Build the JAR
-FROM eclipse-temurin:17-jdk-alpine AS build
+FROM eclipse-temurin:21-jdk-alpine AS build
 WORKDIR /app
 
 # Copy maven wrapper and pom first
@@ -13,7 +13,7 @@ COPY src ./src
 RUN ./mvnw clean package -DskipTests
 
 # Stage 2: Run the JAR
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
 # Copy the built jar from the build stage

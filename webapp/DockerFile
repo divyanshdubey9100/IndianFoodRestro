@@ -17,9 +17,8 @@ FROM nginx:alpine
 RUN rm -rf /usr/share/nginx/html/*
 
 # COPY the build output. 
-# IMPORTANT: Check your dist folder structure. 
-# In Angular 19, it is usually /dist/project-name/browser
-COPY --from=build /app/dist/IndianFoodRestro/browser /usr/share/nginx/html
+# In Angular 21+, the output goes directly to dist/project-name
+COPY --from=build /app/dist/IndianFoodRestro /usr/share/nginx/html
 
 # Expose port 80
 EXPOSE 80
