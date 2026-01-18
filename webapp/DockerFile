@@ -20,8 +20,8 @@ RUN rm -rf /usr/share/nginx/html/*
 # In Angular 21+, the output goes directly to dist/project-name
 COPY --from=build /app/dist/IndianFoodRestro /usr/share/nginx/html
 
-# Expose port 80
-EXPOSE 80
+# Expose port 9091
+EXPOSE 9091
 
 # Start Nginx
 CMD ["nginx", "-g", "daemon off;"]
