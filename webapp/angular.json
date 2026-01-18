@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "local__Food_Restro": {
+    "IndianFoodRestro": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -14,7 +14,7 @@
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "main": "src/main.ts",
-            "outputPath": "dist/local__Food_Restro",
+            "outputPath": "dist/IndianFoodRestro",
             "index": "src/index.html",
             "tsConfig": "tsconfig.app.json",
             "assets": [
@@ -60,10 +60,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "local__Food_Restro:build:production"
+              "buildTarget": "IndianFoodRestro:build:production"
             },
             "development": {
-              "buildTarget": "local__Food_Restro:build:development"
+              "buildTarget": "IndianFoodRestro:build:development"
             }
           },
           "defaultConfiguration": "development"

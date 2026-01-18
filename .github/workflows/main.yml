@@ -37,20 +37,18 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: angular-dist
+          # Uploads the entire dist folder so structure is preserved
           path: webapp/dist/
 
   ################################
   # STAGE 2A: Build Backend - Auth Service
   ################################
-  build-Auth-Service:
+  build-auth-service:
     name: Stage 2A - Build Auth Service
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
-
-      - name: Verify Auth Service Directory
-        run: ls backend/Auth-Service
 
       - uses: actions/setup-java@v4
         with:
@@ -60,30 +58,25 @@ jobs:
 
       - name: Build Auth Service
         run: |
-          echo "Workspace:"
-          pwd
-          echo "Tree:"
-          ls -R
-          cd backend/Auth-Service || exit 1
+          cd backend/Auth-Service
           mvn -B clean verify
+          # SAFETY STEP: Remove the '.original' jar if it exists to prevent Docker copy errors
+          rm -f target/*.original
 
       - uses: actions/upload-artifact@v4
         with:
-          name: Auth-Service-jar
+          name: auth-service-jar
           path: backend/Auth-Service/target/*.jar
 
   ################################
   # STAGE 2B: Build Backend - User Service
   ################################
-  build-User-Service:
+  build-user-service:
     name: Stage 2B - Build User Service
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
-
-      - name: Verify User Service Directory
-        run: ls backend/User-Service
 
       - uses: actions/setup-java@v4
         with:
@@ -93,16 +86,14 @@ jobs:
 
       - name: Build User Service
         run: |
-          echo "Workspace:"
-          pwd
-          echo "Tree:"
-          ls -R
-          cd backend/User-Service || exit 1
+          cd backend/User-Service
           mvn -B clean verify
+          # SAFETY STEP: Remove the '.original' jar
+          rm -f target/*.original
 
       - uses: actions/upload-artifact@v4
         with:
-          name: User-Service-jar
+          name: user-service-jar
           path: backend/User-Service/target/*.jar
 
   ################################
@@ -111,11 +102,11 @@ jobs:
   deploy:
     name: Stage 3 - Deploy (Docker Images)
     runs-on: ubuntu-latest
-
-    needs:
+    
+    needs: 
       - build-frontend
-      - build-Auth-Service
-      - build-User-Service
+      - build-auth-service
+      - build-user-service
 
     if: github.ref == 'refs/heads/master'
 
@@ -125,60 +116,66 @@ jobs:
       ################################
       # Download artifacts
       ################################
+      # This restores 'webapp/dist' exactly as it was uploaded
       - uses: actions/download-artifact@v4
         with:
           name: angular-dist
           path: webapp/dist/
 
+      # This puts the jar into 'backend/Auth-Service/target/'
       - uses: actions/download-artifact@v4
         with:
-          name: Auth-Service-jar
+          name: auth-service-jar
           path: backend/Auth-Service/target/
 
+      # This puts the jar into 'backend/User-Service/target/'
       - uses: actions/download-artifact@v4
         with:
-          name: User-Service-jar
+          name: user-service-jar
           path: backend/User-Service/target/
 
       ################################
-      # Docker Login
+      # Docker Hub Login
       ################################
-      - name: Login to GitHub Container Registry
+      - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
-          registry: ghcr.io
-          username: ${{ github.Docker_USER }}
-          password: ${{ secrets.Docker_TOKEN }}
+          registry: docker.io
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
       ################################
       # Build & Push Frontend Image
       ################################
       - name: Build & Push Frontend Image
         run: |
+          cd webapp
           docker build \
-            -f webapp/Dockerfile \
-            -t ghcr.io/${{ github.repository_owner }}/indianfoodrestro-frontend:latest \
-            webapp
-          docker push ghcr.io/${{ github.repository_owner }}/indianfoodrestro-frontend:latest
+            -f DockerFile \
+            -t docker.io/${{ secrets.DOCKER_USER }}/indianfoodrestro-frontend:latest \
+            .
+          docker push docker.io/${{ secrets.DOCKER_USER }}/indianfoodrestro-frontend:latest
 
       ################################
       # Build & Push Auth Service Image
       ################################
       - name: Build & Push Auth Service Image
         run: |
+          cd backend/Auth-Service
           docker build \
-            -f backend/Auth-Service/Dockerfile \
-            -t ghcr.io/${{ github.repository_owner }}/indianfoodrestro-Auth-Service:latest \
-            backend/Auth-Service
-          docker push ghcr.io/${{ github.repository_owner }}/indianfoodrestro-Auth-Service:latest
+            -f DockerFile \
+            -t docker.io/${{ secrets.DOCKER_USER }}/indianfoodrestro-auth-service:latest \
+            .
+          docker push docker.io/${{ secrets.DOCKER_USER }}/indianfoodrestro-auth-service:latest
 
       ################################
       # Build & Push User Service Image
       ################################
       - name: Build & Push User Service Image
         run: |
+          cd backend/User-Service
           docker build \
-            -f backend/User-Service/Dockerfile \
-            -t ghcr.io/${{ github.repository_owner }}/indianfoodrestro-User-Service:latest \
-            backend/User-Service
-          docker push ghcr.io/${{ github.repository_owner }}/indianfoodrestro-User-Service:latest
+            -f DockerFile \
+            -t docker.io/${{ secrets.DOCKER_USER }}/indianfoodrestro-user-service:latest \
+            .
+          docker push docker.io/${{ secrets.DOCKER_USER }}/indianfoodrestro-user-service:latest
