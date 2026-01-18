@@ -42,42 +42,48 @@
     <div class="container">
       <h2 class="section-title">Current Openings</h2>
       <div class="jobs-grid">
-        <div class="job-card" *ngFor="let job of currentJobs">
-          <div class="job-header">
-            <h3>{{ job.title }}</h3>
-            <span class="job-type">{{ job.type }}</span>
+        @for (job of currentJobs; track job) {
+          <div class="job-card">
+            <div class="job-header">
+              <h3>{{ job.title }}</h3>
+              <span class="job-type">{{ job.type }}</span>
+            </div>
+            <div class="job-details">
+              <div class="job-meta">
+                <span class="location">📍 {{ job.location }}</span>
+                <span class="department">🏢 {{ job.department }}</span>
+                <span class="experience">💼 {{ job.experience }}</span>
+              </div>
+              <p class="job-description">{{ job.description }}</p>
+              <div class="job-requirements">
+                <h5>Key Requirements:</h5>
+                <ul>
+                  @for (requirement of job.requirements; track requirement) {
+                    <li>{{ requirement }}</li>
+                  }
+                </ul>
+              </div>
+              <div class="job-actions">
+                <button class="btn-apply" (click)="applyForJob(job)">Apply Now</button>
+                <button class="btn-details" (click)="viewJobDetails(job)">View Details</button>
+              </div>
+            </div>
           </div>
-          <div class="job-details">
-            <div class="job-meta">
-              <span class="location">📍 {{ job.location }}</span>
-              <span class="department">🏢 {{ job.department }}</span>
-              <span class="experience">💼 {{ job.experience }}</span>
-            </div>
-            <p class="job-description">{{ job.description }}</p>
-            <div class="job-requirements">
-              <h5>Key Requirements:</h5>
-              <ul>
-                <li *ngFor="let requirement of job.requirements">{{ requirement }}</li>
-              </ul>
-            </div>
-            <div class="job-actions">
-              <button class="btn-apply" (click)="applyForJob(job)">Apply Now</button>
-              <button class="btn-details" (click)="viewJobDetails(job)">View Details</button>
-            </div>
-          </div>
-        </div>
+        }
       </div>
-      
+
       <!-- No Jobs Available Message -->
-      <div class="no-jobs" *ngIf="currentJobs.length === 0">
-        <div class="no-jobs-content">
-          <div class="no-jobs-icon">💼</div>
-          <h3>No Current Openings</h3>
-          <p>We don't have any open positions at the moment, but we're always looking for talented individuals to join our team.</p>
-          <p>Feel free to submit your resume for future opportunities!</p>
-          <button class="btn-primary" (click)="openGeneralApplication()">Submit Resume</button>
+      @if (currentJobs.length === 0) {
+        <div class="no-jobs">
+          <div class="no-jobs-content">
+            <div class="no-jobs-icon">💼</div>
+            <h3>No Current Openings</h3>
+            <p>We don't have any open positions at the moment, but we're always looking for talented individuals to join our team.</p>
+            <p>Feel free to submit your resume for future opportunities!</p>
+            <button class="btn-primary" (click)="openGeneralApplication()">Submit Resume</button>
+          </div>
         </div>
-      </div>
+      }
     </div>
   </section>
 
@@ -126,7 +132,7 @@
           <div class="culture-content">
             <h2>Our Culture</h2>
             <p>At Spice Palace, we believe that our employees are our greatest asset. We foster a culture of respect, creativity, and continuous learning where everyone can thrive.</p>
-            
+
             <div class="culture-values">
               <div class="culture-value">
                 <h5>🌟 Excellence</h5>
@@ -165,7 +171,7 @@
         <div class="contact-info">
           <div class="contact-item">
             <span class="contact-icon">📧</span>
-              <div class="contact-details">
+            <div class="contact-details">
               <h5>Email</h5>
               <p>careers&#64;spicepalace.com</p>
             </div>
@@ -192,51 +198,53 @@
 </div>
 
 <!-- Application Modal -->
-<div class="modal-overlay" *ngIf="showApplicationModal" (click)="closeApplicationModal()">
-  <div class="modal-content" (click)="$event.stopPropagation()">
-    <div class="modal-header">
-      <h3>Apply for {{ selectedJob?.title }}</h3>
-      <button class="modal-close" (click)="closeApplicationModal()">&times;</button>
-    </div>
-    <div class="modal-body">
-      <form class="application-form" (ngSubmit)="submitApplication()" #applicationForm="ngForm">
-        <div class="form-group">
-          <label for="fullName">Full Name *</label>
-          <input type="text" id="fullName" name="fullName" [(ngModel)]="applicationData.fullName" required>
-        </div>
-        <div class="form-group">
-          <label for="email">Email Address *</label>
-          <input type="email" id="email" name="email" [(ngModel)]="applicationData.email" required>
-        </div>
-        <div class="form-group">
-          <label for="phone">Phone Number *</label>
-          <input type="tel" id="phone" name="phone" [(ngModel)]="applicationData.phone" required>
-        </div>
-        <div class="form-group">
-          <label for="experience">Years of Experience</label>
-          <select id="experience" name="experience" [(ngModel)]="applicationData.experience">
-            <option value="">Select Experience</option>
-            <option value="0-1">0-1 years</option>
-            <option value="2-3">2-3 years</option>
-            <option value="4-5">4-5 years</option>
-            <option value="6+">6+ years</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="coverLetter">Cover Letter</label>
-          <textarea id="coverLetter" name="coverLetter" [(ngModel)]="applicationData.coverLetter" rows="4" 
-                    placeholder="Tell us why you're the perfect fit for this role..."></textarea>
-        </div>
-        <div class="form-group">
-          <label for="resume">Resume *</label>
-          <input type="file" id="resume" name="resume" accept=".pdf,.doc,.docx" (change)="onFileSelect($event)" required>
-          <small>Please upload your resume in PDF, DOC, or DOCX format (max 5MB)</small>
-        </div>
-        <div class="form-actions">
-          <button type="button" class="btn-secondary" (click)="closeApplicationModal()">Cancel</button>
-          <button type="submit" class="btn-primary" [disabled]="!applicationForm.valid">Submit Application</button>
-        </div>
-      </form>
+@if (showApplicationModal) {
+  <div class="modal-overlay" (click)="closeApplicationModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Apply for {{ selectedJob?.title }}</h3>
+        <button class="modal-close" (click)="closeApplicationModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form class="application-form" (ngSubmit)="submitApplication()" #applicationForm="ngForm">
+          <div class="form-group">
+            <label for="fullName">Full Name *</label>
+            <input type="text" id="fullName" name="fullName" [(ngModel)]="applicationData.fullName" required>
+          </div>
+          <div class="form-group">
+            <label for="email">Email Address *</label>
+            <input type="email" id="email" name="email" [(ngModel)]="applicationData.email" required>
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone Number *</label>
+            <input type="tel" id="phone" name="phone" [(ngModel)]="applicationData.phone" required>
+          </div>
+          <div class="form-group">
+            <label for="experience">Years of Experience</label>
+            <select id="experience" name="experience" [(ngModel)]="applicationData.experience">
+              <option value="">Select Experience</option>
+              <option value="0-1">0-1 years</option>
+              <option value="2-3">2-3 years</option>
+              <option value="4-5">4-5 years</option>
+              <option value="6+">6+ years</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="coverLetter">Cover Letter</label>
+            <textarea id="coverLetter" name="coverLetter" [(ngModel)]="applicationData.coverLetter" rows="4"
+            placeholder="Tell us why you're the perfect fit for this role..."></textarea>
+          </div>
+          <div class="form-group">
+            <label for="resume">Resume *</label>
+            <input type="file" id="resume" name="resume" accept=".pdf,.doc,.docx" (change)="onFileSelect($event)" required>
+            <small>Please upload your resume in PDF, DOC, or DOCX format (max 5MB)</small>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn-secondary" (click)="closeApplicationModal()">Cancel</button>
+            <button type="submit" class="btn-primary" [disabled]="!applicationForm.valid">Submit Application</button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
-</div>
+}
