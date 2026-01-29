@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractContro
 
 import { FormValidatorService } from '../services/form-validaton.service';
 import { DatePickerComponent } from '../date-picker/date-picker.component';
+import { RegisterService } from './register.service';
 
 @Component({
   selector: 'app-register',
@@ -21,7 +22,8 @@ export class RegisterComponent implements OnInit{
 
   constructor(
     private formData: FormBuilder,
-    private formValidator: FormValidatorService
+    private formValidator: FormValidatorService,
+    private registerService: RegisterService
   ) {}
 
   passwordMatchValidator = (formGroup: AbstractControl): { [key: string]: any } | null => {
@@ -63,8 +65,13 @@ export class RegisterComponent implements OnInit{
     
     this.isSubmitting = true;
     
-    // Simulate API call or add your registration logic here
     console.log('Registration Data:', this.registerUserForm.value);
+    
+    this.registerService.doSubmitUser(this.registerUserForm.value).subscribe({
+      next: (response) => {
+        console.log('User registration successful:', response); 
+      }
+    });
     
     // Reset the submitting state after completion
     // In a real app, this would be done in the success/error callback
