@@ -92,4 +92,4 @@ docker-deploy:
   rules:
     # Runs if branch is 'master' OR 'R2026.1'
     - if: $CI_COMMIT_BRANCH == "master"
-    - if: $CI_COMMIT_BRANCH == "R2026.1"
+   #- if: $CI_COMMIT_BRANCH == "R2026.1"

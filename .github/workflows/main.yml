@@ -108,7 +108,9 @@ jobs:
       - build-auth-service
       - build-user-service
 
-    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/R2026.1'
+    #if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/R2026.1'
+
+    if: github.ref == 'refs/heads/master'
 
     steps:
       - uses: actions/checkout@v4
