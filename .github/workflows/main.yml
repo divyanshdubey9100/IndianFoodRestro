@@ -2,9 +2,9 @@ name: CI Pipeline (Angular + Spring Microservices)
 
 on:
   push:
-    branches: [ master, dev ]
+    branches: [ master, R2026.1, dev ]
   pull_request:
-    branches: [ master, dev ]
+    branches: [ master, R2026.1, dev ]
 
 permissions:
   contents: read
@@ -108,7 +108,7 @@ jobs:
       - build-auth-service
       - build-user-service
 
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/R2026.1'
 
     steps:
       - uses: actions/checkout@v4
