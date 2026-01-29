@@ -74,7 +74,7 @@ docker-deploy:
   
   before_script:
     # Login to Docker Hub using variables defined in GitLab Settings
-    - docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD" docker.io
+    - docker login -u "$DOCKER_USER" -p "$DOCKER_TOKEN" docker.io
   
   script:
     # Frontend Docker Image
