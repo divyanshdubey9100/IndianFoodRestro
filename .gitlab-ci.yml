@@ -6,7 +6,9 @@ stages:
 variables:
   CACHE_NPM_PATH: webapp/node_modules/
   CACHE_MAVEN_PATH: .m2/repository
+  # Required for Docker-in-Docker (DinD)
   DOCKER_TLS_CERTDIR: ""
+  DOCKER_HOST: tcp://docker:2375
 
 cache:
   key: "${CI_COMMIT_REF_SLUG}"
@@ -15,7 +17,7 @@ cache:
     - $CACHE_MAVEN_PATH
 
 ############################
-# Frontend Build
+# Frontend Build (Unchanged)
 ############################
 build-frontend:
   image: node:20
@@ -30,7 +32,7 @@ build-frontend:
       - webapp/dist/
 
 ############################
-# Backend Build - Auth Service
+# Backend Build - Auth Service (Unchanged)
 ############################
 build-Auth-Service:
   image: maven:3.9.6-eclipse-temurin-21
@@ -43,7 +45,7 @@ build-Auth-Service:
       - backend/Auth-Service/target/
 
 ############################
-# Backend Build - User Service
+# Backend Build - User Service (Unchanged)
 ############################
 build-User-Service:
   image: maven:3.9.6-eclipse-temurin-21
@@ -56,30 +58,38 @@ build-User-Service:
       - backend/User-Service/target/
 
 ############################
-# Docker Build & Push
+# Docker Build & Push (Updated)
 ############################
 docker-deploy:
-  image: docker:25
+  image: docker:24.0.5
   stage: docker-deploy
   services:
-    - docker:25-dind
+    - name: docker:24.0.5-dind
+      alias: docker
+  
   needs:
     - build-frontend
     - build-Auth-Service
     - build-User-Service
+  
   before_script:
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+    # Login to Docker Hub using variables defined in GitLab Settings
+    - docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD" docker.io
+  
   script:
     # Frontend Docker Image
-    - docker build -t $CI_REGISTRY_IMAGE/frontend:latest webapp
-    - docker push $CI_REGISTRY_IMAGE/frontend:latest
+    - docker build -f webapp/DockerFile -t docker.io/$DOCKER_USER/indianfoodrestro-frontend:latest webapp
+    - docker push docker.io/$DOCKER_USER/indianfoodrestro-frontend:latest
 
     # Auth Service Docker Image
-    - docker build -t $CI_REGISTRY_IMAGE/Auth-Service:latest backend/Auth-Service
-    - docker push $CI_REGISTRY_IMAGE/Auth-Service:latest
+    - docker build -f backend/Auth-Service/DockerFile -t docker.io/$DOCKER_USER/indianfoodrestro-auth-service:latest backend/Auth-Service
+    - docker push docker.io/$DOCKER_USER/indianfoodrestro-auth-service:latest
 
     # User Service Docker Image
-    - docker build -t $CI_REGISTRY_IMAGE/User-Service:latest backend/User-Service
-    - docker push $CI_REGISTRY_IMAGE/User-Service:latest
+    - docker build -f backend/User-Service/DockerFile -t docker.io/$DOCKER_USER/indianfoodrestro-user-service:latest backend/User-Service
+    - docker push docker.io/$DOCKER_USER/indianfoodrestro-user-service:latest
+
   rules:
-    - if: $CI_COMMIT_BRANCH == "main"
+    # Runs if branch is 'master' OR 'R2026.1'
+    - if: $CI_COMMIT_BRANCH == "master"
+   #- if: $CI_COMMIT_BRANCH == "R2026.1"
