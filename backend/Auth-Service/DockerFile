@@ -1,25 +1,16 @@
-# Stage 1: Build the JAR
-FROM eclipse-temurin:17-jdk-alpine AS build
+# Stage 1: Build
+FROM eclipse-temurin:21-jdk-alpine AS build
 WORKDIR /app
-
-# Copy maven wrapper and pom first
 COPY .mvn/ .mvn
 COPY mvnw pom.xml ./
-# Make mvnw executable
-RUN chmod +x ./mvnw
-# Download dependencies (this step is cached if pom.xml doesn't change)
+RUN sed -i 's/\r$//' mvnw && chmod +x ./mvnw
 RUN ./mvnw dependency:go-offline
-
-# Copy source and build
 COPY src ./src
 RUN ./mvnw clean package -DskipTests
 
-# Stage 2: Run the JAR
-FROM eclipse-temurin:17-jre-alpine
+# Stage 2: Run
+FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
-
-# Copy the built jar from the build stage
 COPY --from=build /app/target/*.jar app.jar
-
 EXPOSE 9091
 ENTRYPOINT ["java", "-jar", "app.jar"]
