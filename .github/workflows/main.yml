@@ -40,8 +40,8 @@ jobs:
   build-auth-service:
     name: Stage 2A - Build Auth Service
     runs-on: ubuntu-latest
-    
-    # [FIX] Add a health check to wait for the DB
+
+    # [FIX] Service container configuration
     services:
       postgres:
         image: postgres:15-alpine
@@ -50,12 +50,14 @@ jobs:
           POSTGRES_USER: indian_food_restro
           POSTGRES_PASSWORD: indian_food_restro
         ports:
+          # Maps port 5432 in container to 5432 on the runner (localhost)
           - 5432:5432
+        # [CRITICAL] Health check must use YOUR username (-U)
         options: >-
-          --health-cmd pg_isready
+          --health-cmd "pg_isready -U indian_food_restro"
           --health-interval 10s
           --health-timeout 5s
-          --health-retries 5
+          --health-retries 10
 
     steps:
       - uses: actions/checkout@v4
@@ -68,7 +70,8 @@ jobs:
       - name: Build Auth Service
         run: |
           cd backend/Auth-Service
-          # [FIX] Force DB connection settings via command line to override application.yml
+          # [FIX] Force connection to localhost with correct credentials
+          # This overrides application.yml settings for the CI environment
           mvn -B clean verify \
             -Dspring.datasource.url=jdbc:postgresql://localhost:5432/indian_food_db \
             -Dspring.datasource.username=indian_food_restro \
@@ -98,10 +101,10 @@ jobs:
         ports:
           - 5432:5432
         options: >-
-          --health-cmd pg_isready
+          --health-cmd "pg_isready -U indian_food_restro"
           --health-interval 10s
           --health-timeout 5s
-          --health-retries 5
+          --health-retries 10
 
     steps:
       - uses: actions/checkout@v4
@@ -114,7 +117,6 @@ jobs:
       - name: Build User Service
         run: |
           cd backend/User-Service
-          # [FIX] Force connection here too
           mvn -B clean verify \
             -Dspring.datasource.url=jdbc:postgresql://localhost:5432/indian_food_db \
             -Dspring.datasource.username=indian_food_restro \
@@ -137,11 +139,12 @@ jobs:
       - build-frontend
       - build-auth-service
       - build-user-service
-    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev'
+    if: github.ref == 'refs/heads/master'
 
     steps:
       - uses: actions/checkout@v4
 
+      # Restore artifacts
       - uses: actions/download-artifact@v4
         with:
           name: angular-dist
@@ -157,6 +160,7 @@ jobs:
           name: user-service-jar
           path: backend/User-Service/target/
 
+      # Docker Hub Login
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
@@ -164,6 +168,7 @@ jobs:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      # Build & Push Frontend
       - name: Build & Push Frontend Image
         run: |
           cd webapp
@@ -173,6 +178,7 @@ jobs:
             .
           docker push docker.io/${{ secrets.DOCKER_USER }}/indianfoodrestro-frontend:latest
 
+      # Build & Push Auth Service
       - name: Build & Push Auth Service Image
         run: |
           cd backend/Auth-Service
@@ -182,6 +188,7 @@ jobs:
             .
           docker push docker.io/${{ secrets.DOCKER_USER }}/indianfoodrestro-auth-service:latest
 
+      # Build & Push User Service
       - name: Build & Push User Service Image
         run: |
           cd backend/User-Service
