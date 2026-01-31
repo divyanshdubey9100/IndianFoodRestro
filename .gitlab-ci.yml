@@ -25,7 +25,6 @@ build-frontend:
   script:
     - cd webapp
     - npm ci --include=dev
-    - npx ng version
     - npx ng build --configuration production --optimization=false
   artifacts:
     paths:
@@ -43,35 +42,34 @@ build-Auth-Service:
       alias: postgres-db
       
   variables:
-    # 1. Initialize the Postgres Container
-    POSTGRES_DB: $POSTGRES_DB       # maps to your secret variable
-    POSTGRES_USER: $DB_USERNAME     # maps to your secret variable
-    POSTGRES_PASSWORD: $DB_PASSWORD # maps to your secret variable
+    # Initialize the Postgres Container with your specific credentials
+    POSTGRES_DB: $POSTGRES_DB
+    POSTGRES_USER: $DB_USERNAME
+    POSTGRES_PASSWORD: $DB_PASSWORD
     
-    # 2. Variables for Spring Boot (matches application.yml placeholders)
-    DB_HOST: postgres-db            # Tells Spring to use the service alias
-    DB_NAME: $POSTGRES_DB
-    DB_PORT: 5432
-    # DB_USERNAME/PASSWORD are inherited automatically from GitLab secrets
-    HIBERNATE_DDL_AUTO: create-drop # Forces clean table creation for tests
+    # Switch profile to 'ci' to avoid loading 'application-dev.yml' which has localhost hardcoded
+    SPRING_PROFILES_ACTIVE: ci
 
   before_script:
+    # Install netcat to check connection
     - apt-get update && apt-get install -y netcat-openbsd
-    - echo "Waiting for postgres-db..."
+    - echo "Waiting for postgres-db to be ready..."
+    # Wait loop: checks port, then waits extra time for user creation
     - |
       for i in {1..30}; do
         if nc -z postgres-db 5432; then
-          echo "Database is ready!"
+          echo "Port is open! Sleeping 15s for database initialization..."
+          sleep 15
           break
         fi
         echo "Waiting..."
-        sleep 1
+        sleep 2
       done
 
   script:
     - cd backend/Auth-Service
-    # No need for long arguments now; application.yml reads the variables above!
-    - mvn clean install
+    # FORCE override: This tells Spring Boot to ignore 'localhost' and use 'postgres-db'
+    - mvn clean install -Dspring.datasource.url=jdbc:postgresql://postgres-db:5432/$POSTGRES_DB -Dspring.datasource.username=$DB_USERNAME -Dspring.datasource.password=$DB_PASSWORD -Dspring.jpa.hibernate.ddl-auto=create-drop
   
   artifacts:
     paths:
@@ -92,27 +90,22 @@ build-User-Service:
     POSTGRES_DB: $POSTGRES_DB
     POSTGRES_USER: $DB_USERNAME
     POSTGRES_PASSWORD: $DB_PASSWORD
-    DB_HOST: postgres-db
-    DB_NAME: $POSTGRES_DB
-    DB_PORT: 5432
-    HIBERNATE_DDL_AUTO: create-drop
+    SPRING_PROFILES_ACTIVE: ci
 
   before_script:
     - apt-get update && apt-get install -y netcat-openbsd
-    - echo "Waiting for postgres-db..."
     - |
       for i in {1..30}; do
         if nc -z postgres-db 5432; then
-          echo "Database is ready!"
+          sleep 15
           break
         fi
-        echo "Waiting..."
-        sleep 1
+        sleep 2
       done
 
   script:
     - cd backend/User-Service
-    - mvn clean install
+    - mvn clean install -Dspring.datasource.url=jdbc:postgresql://postgres-db:5432/$POSTGRES_DB -Dspring.datasource.username=$DB_USERNAME -Dspring.datasource.password=$DB_PASSWORD -Dspring.jpa.hibernate.ddl-auto=create-drop
   
   artifacts:
     paths:
@@ -127,25 +120,18 @@ docker-deploy:
   services:
     - name: docker:24.0.5-dind
       alias: docker
-  
   needs:
     - build-frontend
     - build-Auth-Service
     - build-User-Service
-  
   before_script:
     - docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD" docker.io
-  
   script:
     - docker build -f webapp/DockerFile -t docker.io/$DOCKER_USER/indianfoodrestro-frontend:latest webapp
     - docker push docker.io/$DOCKER_USER/indianfoodrestro-frontend:latest
-
     - docker build -f backend/Auth-Service/DockerFile -t docker.io/$DOCKER_USER/indianfoodrestro-auth-service:latest backend/Auth-Service
     - docker push docker.io/$DOCKER_USER/indianfoodrestro-auth-service:latest
-
     - docker build -f backend/User-Service/DockerFile -t docker.io/$DOCKER_USER/indianfoodrestro-user-service:latest backend/User-Service
     - docker push docker.io/$DOCKER_USER/indianfoodrestro-user-service:latest
-
   rules:
     - if: $CI_COMMIT_BRANCH == "master"
-   #- if: $CI_COMMIT_BRANCH == "R2026.1"
