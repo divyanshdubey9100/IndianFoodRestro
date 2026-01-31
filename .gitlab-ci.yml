@@ -4,6 +4,7 @@ stages:
   - docker-deploy
 
 variables:
+  # Using the same cache paths as your working setup
   CACHE_NPM_PATH: webapp/node_modules/
   CACHE_MAVEN_PATH: .m2/repository
   DOCKER_TLS_CERTDIR: ""
@@ -16,70 +17,69 @@ cache:
     - $CACHE_NPM_PATH
     - $CACHE_MAVEN_PATH
 
-############################
-# Frontend Build
-############################
+##################################################
+# STAGE 1: Build Frontend (Matches GitHub Logic)
+##################################################
 build-frontend:
   image: node:20
   stage: build-frontend
   script:
     - cd webapp
-    - npm ci --include=dev
-    - npx ng version
-    - npx ng build --configuration production --optimization=false
+    - npm ci
+    # Matches your GitHub command:
+    - npm run build -- --configuration production
   artifacts:
     paths:
       - webapp/dist/
 
-############################
-# Backend Build - Auth Service
-############################
+##################################################
+# STAGE 2A: Build Backend - Auth Service
+##################################################
 build-Auth-Service:
   image: maven:3.9.6-eclipse-temurin-21
   stage: build-backend
   
+  # 1. Define the Service (Like GitHub 'services')
   services:
     - name: postgres:15-alpine
       alias: postgres-db
-      
+  
+  # 2. Define DB Credentials (Matches GitHub 'env')
   variables:
-    # 1. Initialize the Postgres Container
-    POSTGRES_DB: $POSTGRES_DB       # maps to your secret variable
-    POSTGRES_USER: $DB_USERNAME     # maps to your secret variable
-    POSTGRES_PASSWORD: $DB_PASSWORD # maps to your secret variable
-    
-    # 2. Variables for Spring Boot (matches application.yml placeholders)
-    DB_HOST: postgres-db            # Tells Spring to use the service alias
-    DB_NAME: $POSTGRES_DB
-    DB_PORT: 5432
-    # DB_USERNAME/PASSWORD are inherited automatically from GitLab secrets
-    HIBERNATE_DDL_AUTO: create-drop # Forces clean table creation for tests
+    POSTGRES_DB: indian_food_db
+    POSTGRES_USER: indian_food_restro
+    POSTGRES_PASSWORD: indian_food_restro
 
   before_script:
+    # 3. Health Check replacement (GitLab doesn't support 'options: --health-cmd' natively like GitHub)
     - apt-get update && apt-get install -y netcat-openbsd
-    - echo "Waiting for postgres-db..."
+    - echo "Waiting for database at postgres-db:5432..."
     - |
       for i in {1..30}; do
         if nc -z postgres-db 5432; then
-          echo "Database is ready!"
+          echo "Port Open! Waiting 10s for full initialization..."
+          sleep 10 # Extra safety buffer for user creation
           break
         fi
         echo "Waiting..."
-        sleep 1
+        sleep 2
       done
 
   script:
     - cd backend/Auth-Service
-    # No need for long arguments now; application.yml reads the variables above!
-    - mvn clean install
-  
+    # 4. Force Connection Settings (Matches GitHub mvn command)
+    # We change 'localhost' to 'postgres-db' because GitLab networking requires the alias
+    - mvn -B clean verify -Dspring.datasource.url=jdbc:postgresql://postgres-db:5432/indian_food_db -Dspring.datasource.username=indian_food_restro -Dspring.datasource.password=indian_food_restro -Dspring.jpa.hibernate.ddl-auto=create-drop
+    # Clean up artifact to prevent Docker issues
+    - rm -f target/*.original
+
   artifacts:
     paths:
-      - backend/Auth-Service/target/
+      - backend/Auth-Service/target/*.jar
 
-############################
-# Backend Build - User Service
-############################
+##################################################
+# STAGE 2B: Build Backend - User Service
+##################################################
 build-User-Service:
   image: maven:3.9.6-eclipse-temurin-21
   stage: build-backend
@@ -87,40 +87,35 @@ build-User-Service:
   services:
     - name: postgres:15-alpine
       alias: postgres-db
-      
+  
   variables:
-    POSTGRES_DB: $POSTGRES_DB
-    POSTGRES_USER: $DB_USERNAME
-    POSTGRES_PASSWORD: $DB_PASSWORD
-    DB_HOST: postgres-db
-    DB_NAME: $POSTGRES_DB
-    DB_PORT: 5432
-    HIBERNATE_DDL_AUTO: create-drop
+    POSTGRES_DB: indian_food_db
+    POSTGRES_USER: indian_food_restro
+    POSTGRES_PASSWORD: indian_food_restro
 
   before_script:
     - apt-get update && apt-get install -y netcat-openbsd
-    - echo "Waiting for postgres-db..."
     - |
       for i in {1..30}; do
         if nc -z postgres-db 5432; then
-          echo "Database is ready!"
+          sleep 10
           break
         fi
-        echo "Waiting..."
-        sleep 1
+        sleep 2
       done
 
   script:
     - cd backend/User-Service
-    - mvn clean install
+    - mvn -B clean verify -Dspring.datasource.url=jdbc:postgresql://postgres-db:5432/indian_food_db -Dspring.datasource.username=indian_food_restro -Dspring.datasource.password=indian_food_restro -Dspring.jpa.hibernate.ddl-auto=create-drop
+    - rm -f target/*.original
   
   artifacts:
     paths:
-      - backend/User-Service/target/
+      - backend/User-Service/target/*.jar
 
-############################
-# Docker Build & Push
-############################
+##################################################
+# STAGE 3: Docker Deploy (Matches GitHub Steps)
+##################################################
 docker-deploy:
   image: docker:24.0.5
   stage: docker-deploy
@@ -134,18 +129,26 @@ docker-deploy:
     - build-User-Service
   
   before_script:
+    # Login using GitLab Secrets (Assuming you named them same as GitHub)
     - docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD" docker.io
   
   script:
-    - docker build -f webapp/DockerFile -t docker.io/$DOCKER_USER/indianfoodrestro-frontend:latest webapp
+    # Frontend
+    - cd webapp
+    - docker build -f DockerFile -t docker.io/$DOCKER_USER/indianfoodrestro-frontend:latest .
     - docker push docker.io/$DOCKER_USER/indianfoodrestro-frontend:latest
+    - cd ..
 
-    - docker build -f backend/Auth-Service/DockerFile -t docker.io/$DOCKER_USER/indianfoodrestro-auth-service:latest backend/Auth-Service
+    # Auth Service
+    - cd backend/Auth-Service
+    - docker build -f DockerFile -t docker.io/$DOCKER_USER/indianfoodrestro-auth-service:latest .
     - docker push docker.io/$DOCKER_USER/indianfoodrestro-auth-service:latest
+    - cd ../..
 
-    - docker build -f backend/User-Service/DockerFile -t docker.io/$DOCKER_USER/indianfoodrestro-user-service:latest backend/User-Service
+    # User Service
+    - cd backend/User-Service
+    - docker build -f DockerFile -t docker.io/$DOCKER_USER/indianfoodrestro-user-service:latest .
     - docker push docker.io/$DOCKER_USER/indianfoodrestro-user-service:latest
 
   rules:
     - if: $CI_COMMIT_BRANCH == "master"
-   #- if: $CI_COMMIT_BRANCH == "R2026.1"
