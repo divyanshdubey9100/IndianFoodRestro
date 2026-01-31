@@ -37,7 +37,6 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: angular-dist
-          # Uploads the entire dist folder so structure is preserved
           path: webapp/dist/
 
   ################################
@@ -46,6 +45,23 @@ jobs:
   build-auth-service:
     name: Stage 2A - Build Auth Service
     runs-on: ubuntu-latest
+
+    # [CHANGE] Service container for Database Tests
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_DB: indian_food_db
+          POSTGRES_USER: indian_food_restro
+          POSTGRES_PASSWORD: indian_food_restro
+        ports:
+          - 5432:5432
+        # Health check ensures DB is ready before steps start
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - uses: actions/checkout@v4
@@ -59,8 +75,12 @@ jobs:
       - name: Build Auth Service
         run: |
           cd backend/Auth-Service
-          mvn -B clean verify
-          # SAFETY STEP: Remove the '.original' jar if it exists to prevent Docker copy errors
+          # [CHANGE] Force connection to localhost with correct credentials
+          mvn -B clean verify \
+            -Dspring.datasource.url=jdbc:postgresql://localhost:5432/indian_food_db \
+            -Dspring.datasource.username=indian_food_restro \
+            -Dspring.datasource.password=indian_food_restro \
+            -Dspring.jpa.hibernate.ddl-auto=create-drop
           rm -f target/*.original
 
       - uses: actions/upload-artifact@v4
@@ -75,6 +95,22 @@ jobs:
     name: Stage 2B - Build User Service
     runs-on: ubuntu-latest
 
+    # [CHANGE] Service container for Database Tests
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_DB: indian_food_db
+          POSTGRES_USER: indian_food_restro
+          POSTGRES_PASSWORD: indian_food_restro
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - uses: actions/checkout@v4
 
@@ -87,8 +123,12 @@ jobs:
       - name: Build User Service
         run: |
           cd backend/User-Service
-          mvn -B clean verify
-          # SAFETY STEP: Remove the '.original' jar
+          # [CHANGE] Force connection to localhost with correct credentials
+          mvn -B clean verify \
+            -Dspring.datasource.url=jdbc:postgresql://localhost:5432/indian_food_db \
+            -Dspring.datasource.username=indian_food_restro \
+            -Dspring.datasource.password=indian_food_restro \
+            -Dspring.jpa.hibernate.ddl-auto=create-drop
           rm -f target/*.original
 
       - uses: actions/upload-artifact@v4
@@ -108,35 +148,28 @@ jobs:
       - build-auth-service
       - build-user-service
 
-    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/R2026.1'
+    if: github.ref == 'refs/heads/master'
 
     steps:
       - uses: actions/checkout@v4
 
-      ################################
-      # Download artifacts
-      ################################
-      # This restores 'webapp/dist' exactly as it was uploaded
+      # Restore artifacts
       - uses: actions/download-artifact@v4
         with:
           name: angular-dist
           path: webapp/dist/
 
-      # This puts the jar into 'backend/Auth-Service/target/'
       - uses: actions/download-artifact@v4
         with:
           name: auth-service-jar
           path: backend/Auth-Service/target/
 
-      # This puts the jar into 'backend/User-Service/target/'
       - uses: actions/download-artifact@v4
         with:
           name: user-service-jar
           path: backend/User-Service/target/
 
-      ################################
       # Docker Hub Login
-      ################################
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
@@ -144,9 +177,7 @@ jobs:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      ################################
-      # Build & Push Frontend Image
-      ################################
+      # Build & Push Frontend
       - name: Build & Push Frontend Image
         run: |
           cd webapp
@@ -156,9 +187,7 @@ jobs:
             .
           docker push docker.io/${{ secrets.DOCKER_USER }}/indianfoodrestro-frontend:latest
 
-      ################################
-      # Build & Push Auth Service Image
-      ################################
+      # Build & Push Auth Service
       - name: Build & Push Auth Service Image
         run: |
           cd backend/Auth-Service
@@ -168,9 +197,7 @@ jobs:
             .
           docker push docker.io/${{ secrets.DOCKER_USER }}/indianfoodrestro-auth-service:latest
 
-      ################################
-      # Build & Push User Service Image
-      ################################
+      # Build & Push User Service
       - name: Build & Push User Service Image
         run: |
           cd backend/User-Service
