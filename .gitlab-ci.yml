@@ -129,23 +129,23 @@ docker-deploy:
     - build-User-Service
   
   before_script:
-    # Login using GitLab Secrets (Assuming you named them same as GitHub)
+    # Debug line: verifies variable exists (outputs length, not value)
+    - echo "DOCKER_USER length is ${#DOCKER_USER}"
+    - echo "DOCKER_TOKEN length is ${#DOCKER_TOKEN}"
+    # Force login with explicit flags
     - docker login -u "$DOCKER_USER" -p "$DOCKER_TOKEN" docker.io
   
   script:
-    # Frontend
     - cd webapp
     - docker build -f DockerFile -t docker.io/$DOCKER_USER/indianfoodrestro-frontend:latest .
     - docker push docker.io/$DOCKER_USER/indianfoodrestro-frontend:latest
     - cd ..
 
-    # Auth Service
     - cd backend/Auth-Service
     - docker build -f DockerFile -t docker.io/$DOCKER_USER/indianfoodrestro-auth-service:latest .
     - docker push docker.io/$DOCKER_USER/indianfoodrestro-auth-service:latest
     - cd ../..
 
-    # User Service
     - cd backend/User-Service
     - docker build -f DockerFile -t docker.io/$DOCKER_USER/indianfoodrestro-user-service:latest .
     - docker push docker.io/$DOCKER_USER/indianfoodrestro-user-service:latest
