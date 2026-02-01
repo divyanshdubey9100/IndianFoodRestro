@@ -4,6 +4,8 @@ import java.util.UUID;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -21,7 +23,8 @@ import lombok.Setter;
 public class Address {
 	@Id
 	@Column(name="user_addr_id")
-	private UUID id;
+	@GeneratedValue(strategy = GenerationType.UUID)
+	private UUID id=UUID.randomUUID();
 	private String street;
 	private String city;
 	private String state;
