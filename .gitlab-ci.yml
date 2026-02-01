@@ -130,7 +130,7 @@ docker-deploy:
   
   before_script:
     # Login using GitLab Secrets (Assuming you named them same as GitHub)
-    - docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD" docker.io
+    - docker login -u "$DOCKER_USER" -p "$DOCKER_TOKEN" docker.io
   
   script:
     # Frontend

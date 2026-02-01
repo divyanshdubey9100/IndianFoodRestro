@@ -58,7 +58,7 @@ public class User {
 	private String gender;
 	private String profileImage;
 	
-	@OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "user_user_addr",
 		joinColumns = @JoinColumn(name = "user_id"),
 		inverseJoinColumns = @JoinColumn(name = "user_addr_id")
@@ -73,10 +73,13 @@ public class User {
 	
 	@Enumerated(EnumType.STRING)
 	private Provider provider=Provider.LOCAL;
-	@ManyToMany(fetch = FetchType.EAGER)
+	
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinTable(name="user_user_roles",
-	joinColumns = @JoinColumn(name="user_id"),
-	inverseJoinColumns = @JoinColumn(name="user_role_id"))
+		joinColumns = @JoinColumn(name="user_id"),
+		inverseJoinColumns = @JoinColumn(name="user_role_id")
+	)
+	@Builder.Default
 	private Set<Role> roles=new HashSet<>();
 	
 	@PrePersist
