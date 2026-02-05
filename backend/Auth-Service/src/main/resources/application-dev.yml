@@ -5,6 +5,14 @@ spring:
   application:
     name: Auth-Service
 
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+#  security:
+#    user:
+#      name: admin
+#      password: admin123
+
   thymeleaf:
     check-template-location: false
 
@@ -31,7 +39,7 @@ spring:
       # Use 'create-drop' in CI/CD to ensure clean tests, 'update' locally
       ddl-auto: ${HIBERNATE_DDL_AUTO:update}
     show-sql: true
-    open-in-view: false	
+    open-in-view: false    
     properties:
       hibernate:
         format_sql: true

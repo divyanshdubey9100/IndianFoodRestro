@@ -41,4 +41,5 @@ public class UserDto {
 	private Provider provider=Provider.LOCAL;
 	
 	private Set<RoleDto> roles=new HashSet<>();
+
 }

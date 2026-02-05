@@ -20,7 +20,10 @@ import in.food.restro.authservice.dtos.UserDto;
 import in.food.restro.authservice.entities.Role;
 import in.food.restro.authservice.entities.User;
 import in.food.restro.authservice.enums.Provider;
-import in.food.restro.authservice.exception.ResourceNotFoundException;
+import in.food.restro.authservice.exception.DuplicateResourceException;
+import in.food.restro.authservice.exception.RoleNotFoundException;
+import in.food.restro.authservice.exception.UserAlreadyExistsException;
+import in.food.restro.authservice.exception.UserNotFoundException;
 import in.food.restro.authservice.repositories.UserRepository;
 import in.food.restro.authservice.service.UserService;
 import jakarta.persistence.EntityManager;
@@ -57,7 +60,9 @@ public class UserServiceImpl implements UserService {
      *
      * @param userDto Data Transfer Object containing user registration details.
      * @return UserDto The created user.
-     * @throws IllegalArgumentException If validation fails or if Email/Username already exists.
+     * @throws IllegalArgumentException If validation fails.
+     * @throws DuplicateResourceException If Email already exists.
+     * @throws UserAlreadyExistsException If Username already exists.
      */
     @Override
     @Transactional
@@ -73,11 +78,12 @@ public class UserServiceImpl implements UserService {
 
         if (userRepository.existsByEmail(userDto.getEmail())) {
             log.warn("Service: Registration failed. Email {} already exists.", userDto.getEmail());
-            throw new IllegalArgumentException("Email already exists.");
+            // Changed from IllegalArgumentException to specific DuplicateResourceException
+            throw new DuplicateResourceException("Email already exists: " + userDto.getEmail());
         }
         if (userRepository.existsByUsername(userDto.getUsername())) {
             log.warn("Service: Registration failed. Username {} already exists.", userDto.getUsername());
-            throw new IllegalArgumentException("Username already exists.");
+            throw new UserAlreadyExistsException("User already exists with username: " + userDto.getUsername());
         }
 
         User user = modelMapper.map(userDto, User.class);
@@ -116,7 +122,7 @@ public class UserServiceImpl implements UserService {
      * @param id The UUID of the user to update.
      * @param userDto DTO containing updated fields.
      * @return UserDto The updated user details.
-     * @throws ResourceNotFoundException If the user is not found.
+     * @throws UserNotFoundException If the user is not found.
      */
     @Override
     public UserDto updateUser(String id, UserDto userDto) {
@@ -124,7 +130,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(UUID.fromString(id))
                 .orElseThrow(() -> {
                     log.error("Service: Update failed. User not found with ID: {}", id);
-                    return new ResourceNotFoundException("User not found with id: " + id);
+                    return new UserNotFoundException("User not found with id: " + id);
                 });
 
         user.setFirstName(userDto.getFirstName());
@@ -145,7 +151,7 @@ public class UserServiceImpl implements UserService {
      *
      * @param id The UUID of the user to delete.
      * @return UserDto The details of the user that was deleted.
-     * @throws ResourceNotFoundException If the user is not found.
+     * @throws UserNotFoundException If the user is not found.
      */
     @Override
     public UserDto deleteUser(String id) {
@@ -153,7 +159,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(UUID.fromString(id))
                 .orElseThrow(() -> {
                     log.error("Service: Delete failed. User not found with ID: {}", id);
-                    return new ResourceNotFoundException("User not found with id: " + id);
+                    return new UserNotFoundException("User not found with id: " + id);
                 });
 
         UserDto deletedUserDto = modelMapper.map(user, UserDto.class);
@@ -167,7 +173,7 @@ public class UserServiceImpl implements UserService {
      *
      * @param id The UUID of the user.
      * @return UserDto The found user.
-     * @throws ResourceNotFoundException If the user is not found.
+     * @throws UserNotFoundException If the user is not found.
      */
     @Override
     public UserDto getUserById(String id) {
@@ -175,7 +181,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(UUID.fromString(id))
                 .orElseThrow(() -> {
                     log.error("Service: User not found with ID: {}", id);
-                    return new ResourceNotFoundException("User not found with id: " + id);
+                    return new UserNotFoundException("User not found with id: " + id);
                 });
         return modelMapper.map(user, UserDto.class);
     }
@@ -185,7 +191,7 @@ public class UserServiceImpl implements UserService {
      *
      * @param email The email to search for.
      * @return UserDto The found user.
-     * @throws ResourceNotFoundException If the user is not found.
+     * @throws UserNotFoundException If the user is not found.
      */
     @Override
     public UserDto getUserByEmail(String email) {
@@ -193,7 +199,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> {
                     log.error("Service: User not found with email: {}", email);
-                    return new ResourceNotFoundException("User not found with email: " + email);
+                    return new UserNotFoundException("User not found with email: " + email);
                 });
         return modelMapper.map(user, UserDto.class);
     }
@@ -203,7 +209,7 @@ public class UserServiceImpl implements UserService {
      *
      * @param username The username to search for.
      * @return UserDto The found user.
-     * @throws ResourceNotFoundException If the user is not found.
+     * @throws UserNotFoundException If the user is not found.
      */
     @Override
     public UserDto getUserByUsername(String username) {
@@ -211,7 +217,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> {
                     log.error("Service: User not found with username: {}", username);
-                    return new ResourceNotFoundException("User not found with username: " + username);
+                    return new UserNotFoundException("User not found with username: " + username);
                 });
         return modelMapper.map(user, UserDto.class);
     }
@@ -221,7 +227,7 @@ public class UserServiceImpl implements UserService {
      *
      * @param phoneNumber The phone number to search for.
      * @return UserDto The found user.
-     * @throws ResourceNotFoundException If the user is not found.
+     * @throws UserNotFoundException If the user is not found.
      */
     @Override
     public UserDto getUserByPhoneNumber(String phoneNumber) {
@@ -229,7 +235,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByPhoneNumber(phoneNumber)
                 .orElseThrow(() -> {
                     log.error("Service: User not found with phone: {}", phoneNumber);
-                    return new ResourceNotFoundException("User not found with phone: " + phoneNumber);
+                    return new UserNotFoundException("User not found with phone: " + phoneNumber);
                 });
         return modelMapper.map(user, UserDto.class);
     }
@@ -262,13 +268,13 @@ public class UserServiceImpl implements UserService {
      *
      * @param id The UUID of the user.
      * @return UserDto The updated user.
-     * @throws ResourceNotFoundException If the user is not found.
+     * @throws UserNotFoundException If the user is not found.
      */
     @Override
     public UserDto activateUser(String id) {
         log.info("Service: Request to activate user ID: {}", id);
         User user = userRepository.findById(UUID.fromString(id))
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
         user.setActive(true);
         User savedUser = userRepository.save(user);
         log.info("Service: User ID {} is now ACTIVE.", id);
@@ -280,13 +286,13 @@ public class UserServiceImpl implements UserService {
      *
      * @param id The UUID of the user.
      * @return UserDto The updated user.
-     * @throws ResourceNotFoundException If the user is not found.
+     * @throws UserNotFoundException If the user is not found.
      */
     @Override
     public UserDto deactivateUser(String id) {
         log.info("Service: Request to deactivate user ID: {}", id);
         User user = userRepository.findById(UUID.fromString(id))
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
         user.setActive(false);
         User savedUser = userRepository.save(user);
         log.info("Service: User ID {} is now INACTIVE.", id);
@@ -300,19 +306,20 @@ public class UserServiceImpl implements UserService {
      * @param userId The UUID of the user.
      * @param roleId The UUID of the role to assign.
      * @return UserDto The updated user.
-     * @throws ResourceNotFoundException If user or role is not found.
+     * @throws UserNotFoundException If user is not found.
+     * @throws RoleNotFoundException If role is not found.
      */
     @Override
     @Transactional
     public UserDto assignRoleToUser(String userId, String roleId) {
         log.info("Service: Assigning role ID {} to user ID {}", roleId, userId);
         User user = userRepository.findById(UUID.fromString(userId))
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + userId));
 
         Role role = entityManager.find(Role.class, UUID.fromString(roleId));
         if (role == null) {
             log.error("Service: Role assignment failed. Role not found with ID: {}", roleId);
-            throw new ResourceNotFoundException("Role not found with id: " + roleId);
+            throw new RoleNotFoundException("Role not found with id: " + roleId);
         }
 
         user.getRoles().add(role);
@@ -327,20 +334,22 @@ public class UserServiceImpl implements UserService {
      * @param userId The UUID of the user.
      * @param roleId The UUID of the role to remove.
      * @return UserDto The updated user.
-     * @throws ResourceNotFoundException If the user is not found.
+     * @throws UserNotFoundException If the user is not found.
      */
     @Override
     @Transactional
     public UserDto removeRoleFromUser(String userId, String roleId) {
         log.info("Service: Removing role ID {} from user ID {}", roleId, userId);
         User user = userRepository.findById(UUID.fromString(userId))
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + userId));
 
         boolean removed = user.getRoles().removeIf(r -> r.getId().equals(UUID.fromString(roleId)));
         
         if (removed) {
             log.info("Service: Role removed successfully.");
         } else {
+            // This is arguably not a "RoleNotFound" but rather "RoleNotAssignedToUser".
+            // Keeping as warning to avoid breaking idempotency, or could throw RoleNotFound if strictness required.
             log.warn("Service: Role ID {} was not found on user {}", roleId, userId);
         }
 
@@ -353,13 +362,13 @@ public class UserServiceImpl implements UserService {
      * @param id The UUID of the user.
      * @param newPassword The new password string.
      * @return UserDto The updated user.
-     * @throws ResourceNotFoundException If the user is not found.
+     * @throws UserNotFoundException If the user is not found.
      */
     @Override
     public UserDto changeUserPassword(String id, String newPassword) {
         log.info("Service: Request to change password for user ID: {}", id);
         User user = userRepository.findById(UUID.fromString(id))
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
         
         user.setPassword(newPassword);
         User savedUser = userRepository.save(user);
